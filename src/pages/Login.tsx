@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import safoLogo from "@/assets/safo-logo.png";
 import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [matricula, setMatricula] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement login logic
-    console.log("Login attempt:", { email, password });
+    console.log("Login attempt:", { matricula, password });
   };
 
   return (
@@ -41,13 +41,13 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail</Label>
+                  <Label htmlFor="matricula">Matrícula</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="matricula"
+                    type="text"
+                    placeholder="Digite sua matrícula"
+                    value={matricula}
+                    onChange={(e) => setMatricula(e.target.value)}
                     required
                   />
                 </div>
@@ -77,14 +77,6 @@ const Login = () => {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <div className="text-sm text-center text-muted-foreground">
-              Não tem uma conta?{" "}
-              <Link to="#" className="text-accent hover:underline font-medium">
-                Solicite acesso
-              </Link>
-            </div>
-          </CardFooter>
         </Card>
 
         <p className="text-center text-xs text-muted-foreground mt-8">
