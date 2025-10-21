@@ -26,8 +26,7 @@ const Login = () => {
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src={safoLogo} alt="Safo Logo" className="h-16 w-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-primary">SAFO</h1>
+          <img src={safoLogo} alt="Safo Logo" className="h-24 mx-auto mb-4" />
           <p className="text-muted-foreground mt-2">Sistema de Gestão Portuária</p>
         </div>
 

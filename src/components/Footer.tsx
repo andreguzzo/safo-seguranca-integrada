@@ -7,9 +7,8 @@ export const Footer = () => {
       <div className="container mx-auto max-w-6xl">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src={safoLogo} alt="Safo Logo" className="h-10 w-10" />
-              <span className="text-xl font-bold">SAFO</span>
+            <div className="mb-4">
+              <img src={safoLogo} alt="Safo Logo" className="h-16" />
             </div>
             <p className="text-sm opacity-90">
               Sistema de Gestão de Segurança do Trabalho Portuário Integrado
