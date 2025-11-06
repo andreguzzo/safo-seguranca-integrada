@@ -14,25 +14,58 @@ export type Database = {
   }
   public: {
     Tables: {
+      ogmos: {
+        Row: {
+          cnpj: string
+          created_at: string
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnpj: string
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string
+          created_at?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           id: string
-          matricula: string
+          Matricula: number
           nome_completo: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           id: string
-          matricula: string
+          Matricula: number
           nome_completo: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          matricula?: string
+          Matricula?: number
           nome_completo?: string
           updated_at?: string
         }
