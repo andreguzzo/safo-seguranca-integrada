@@ -30,6 +30,10 @@ const AdminDashboard = () => {
     endereco: "",
     telefone: "",
     email: "",
+    email_master: "",
+    senha_master: "",
+    nome_completo_master: "",
+    matricula_master: "",
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -89,15 +93,57 @@ const AdminDashboard = () => {
     e.preventDefault();
     
     try {
-      const { error } = await supabase.from("ogmos").insert([formData]);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Sessão não encontrada");
+      }
 
-      if (error) throw error;
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/create-ogmo-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            email: formData.email_master,
+            password: formData.senha_master,
+            nome_completo: formData.nome_completo_master,
+            matricula: parseInt(formData.matricula_master),
+            ogmo_data: {
+              nome: formData.nome,
+              cnpj: formData.cnpj,
+              endereco: formData.endereco,
+              telefone: formData.telefone,
+              email: formData.email,
+            },
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Erro ao criar OGMO");
+      }
 
       toast({
-        title: "OGMO criado com sucesso!",
+        title: "OGMO e usuário criados com sucesso!",
       });
 
-      setFormData({ nome: "", cnpj: "", endereco: "", telefone: "", email: "" });
+      setFormData({
+        nome: "",
+        cnpj: "",
+        endereco: "",
+        telefone: "",
+        email: "",
+        email_master: "",
+        senha_master: "",
+        nome_completo_master: "",
+        matricula_master: "",
+      });
       setIsDialogOpen(false);
       fetchOgmos();
     } catch (error: any) {
@@ -180,7 +226,7 @@ const AdminDashboard = () => {
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="nome">Nome *</Label>
+                      <Label htmlFor="nome">Nome do OGMO *</Label>
                       <Input
                         id="nome"
                         value={formData.nome}
@@ -214,7 +260,7 @@ const AdminDashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email">Email do OGMO</Label>
                       <Input
                         id="email"
                         type="email"
@@ -222,8 +268,57 @@ const AdminDashboard = () => {
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </div>
+
+                    <div className="border-t pt-4 mt-4">
+                      <h3 className="text-lg font-semibold mb-4">Usuário Master OGMO</h3>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="nome_completo_master">Nome Completo *</Label>
+                        <Input
+                          id="nome_completo_master"
+                          value={formData.nome_completo_master}
+                          onChange={(e) => setFormData({ ...formData, nome_completo_master: e.target.value })}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="space-y-2 mt-4">
+                        <Label htmlFor="matricula_master">Matrícula *</Label>
+                        <Input
+                          id="matricula_master"
+                          type="number"
+                          value={formData.matricula_master}
+                          onChange={(e) => setFormData({ ...formData, matricula_master: e.target.value })}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="space-y-2 mt-4">
+                        <Label htmlFor="email_master">Email *</Label>
+                        <Input
+                          id="email_master"
+                          type="email"
+                          value={formData.email_master}
+                          onChange={(e) => setFormData({ ...formData, email_master: e.target.value })}
+                          required
+                        />
+                      </div>
+                      
+                      <div className="space-y-2 mt-4">
+                        <Label htmlFor="senha_master">Senha *</Label>
+                        <Input
+                          id="senha_master"
+                          type="password"
+                          value={formData.senha_master}
+                          onChange={(e) => setFormData({ ...formData, senha_master: e.target.value })}
+                          required
+                          minLength={6}
+                        />
+                      </div>
+                    </div>
+
                     <Button type="submit" className="w-full">
-                      Cadastrar OGMO
+                      Cadastrar OGMO e Usuário
                     </Button>
                   </form>
                 </DialogContent>
