@@ -44,7 +44,7 @@ serve(async (req) => {
       throw new Error("Insufficient permissions");
     }
 
-    const { email, password, nome_completo, matricula, ogmo_data } = await req.json();
+    const { email, password, ogmo_data } = await req.json();
 
     // Create user
     const { data: newUser, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
@@ -54,17 +54,6 @@ serve(async (req) => {
     });
 
     if (createUserError) throw createUserError;
-
-    // Create profile
-    const { error: profileError } = await supabaseAdmin
-      .from("profiles")
-      .insert({
-        id: newUser.user.id,
-        nome_completo,
-        Matricula: matricula,
-      });
-
-    if (profileError) throw profileError;
 
     // Assign OGMO role
     const { error: roleError } = await supabaseAdmin

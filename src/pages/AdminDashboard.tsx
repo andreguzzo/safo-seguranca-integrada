@@ -32,8 +32,6 @@ const AdminDashboard = () => {
     email: "",
     email_master: "",
     senha_master: "",
-    nome_completo_master: "",
-    matricula_master: "",
   });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -110,8 +108,6 @@ const AdminDashboard = () => {
           body: JSON.stringify({
             email: formData.email_master,
             password: formData.senha_master,
-            nome_completo: formData.nome_completo_master,
-            matricula: parseInt(formData.matricula_master),
             ogmo_data: {
               nome: formData.nome,
               cnpj: formData.cnpj,
@@ -141,8 +137,6 @@ const AdminDashboard = () => {
         email: "",
         email_master: "",
         senha_master: "",
-        nome_completo_master: "",
-        matricula_master: "",
       });
       setIsDialogOpen(false);
       fetchOgmos();
@@ -273,27 +267,6 @@ const AdminDashboard = () => {
                       <h3 className="text-lg font-semibold mb-4">Usuário Master OGMO</h3>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="nome_completo_master">Nome Completo *</Label>
-                        <Input
-                          id="nome_completo_master"
-                          value={formData.nome_completo_master}
-                          onChange={(e) => setFormData({ ...formData, nome_completo_master: e.target.value })}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2 mt-4">
-                        <Label htmlFor="matricula_master">Matrícula *</Label>
-                        <Input
-                          id="matricula_master"
-                          type="number"
-                          value={formData.matricula_master}
-                          onChange={(e) => setFormData({ ...formData, matricula_master: e.target.value })}
-                          required
-                        />
-                      </div>
-                      
-                      <div className="space-y-2 mt-4">
                         <Label htmlFor="email_master">Email *</Label>
                         <Input
                           id="email_master"
