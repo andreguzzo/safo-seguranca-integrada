@@ -211,7 +211,7 @@ const AdminDashboard = () => {
                     Novo OGMO
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Cadastrar Novo OGMO</DialogTitle>
                     <DialogDescription>
