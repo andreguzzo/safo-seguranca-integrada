@@ -31,7 +31,8 @@ import {
   Trash2,
   BarChart3,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  Ambulance
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -52,6 +53,7 @@ interface DocumentStats {
   incidentes: number;
   top: number;
   pt: number;
+  acidentes: number;
 }
 
 const OgmoDashboard = () => {
@@ -65,7 +67,8 @@ const OgmoDashboard = () => {
     rds: 0,
     incidentes: 0,
     top: 0,
-    pt: 0
+    pt: 0,
+    acidentes: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -212,6 +215,12 @@ const OgmoDashboard = () => {
                           <span>PT</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <Ambulance className="h-4 w-4" />
+                          <span>Acidentes de Trabalho</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </CollapsibleContent>
@@ -316,6 +325,17 @@ const OgmoDashboard = () => {
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.pt}</div>
                   <p className="text-xs text-muted-foreground">permissões de trabalho</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Acidentes de Trabalho</CardTitle>
+                  <Ambulance className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.acidentes}</div>
+                  <p className="text-xs text-muted-foreground">acidentes registrados</p>
                 </CardContent>
               </Card>
             </div>
