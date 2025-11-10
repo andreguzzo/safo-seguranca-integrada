@@ -32,7 +32,9 @@ import {
   BarChart3,
   LogOut,
   ChevronDown,
-  Ambulance
+  Ambulance,
+  FileSearch,
+  CalendarCheck
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -47,13 +49,15 @@ interface OGMO {
 }
 
 interface DocumentStats {
-  checklists: number;
-  rnc: number;
-  rds: number;
-  incidentes: number;
-  top: number;
-  pt: number;
   acidentes: number;
+  incidentes: number;
+  rnc: number;
+  top: number;
+  rds: number;
+  checklists: number;
+  pt: number;
+  investigacoes: number;
+  reunioes: number;
 }
 
 const OgmoDashboard = () => {
@@ -62,13 +66,15 @@ const OgmoDashboard = () => {
   const { toast } = useToast();
   const [ogmo, setOgmo] = useState<OGMO | null>(null);
   const [stats, setStats] = useState<DocumentStats>({
-    checklists: 0,
-    rnc: 0,
-    rds: 0,
+    acidentes: 0,
     incidentes: 0,
+    rnc: 0,
     top: 0,
+    rds: 0,
+    checklists: 0,
     pt: 0,
-    acidentes: 0
+    investigacoes: 0,
+    reunioes: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -181,20 +187,8 @@ const OgmoDashboard = () => {
                     <SidebarMenu>
                       <SidebarMenuItem>
                         <SidebarMenuButton>
-                          <ClipboardCheck className="h-4 w-4" />
-                          <span>Checklists</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <AlertTriangle className="h-4 w-4" />
-                          <span>RNC</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton>
-                          <Shield className="h-4 w-4" />
-                          <span>RDS</span>
+                          <Ambulance className="h-4 w-4" />
+                          <span>Acidentes de Trabalho</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -205,8 +199,26 @@ const OgmoDashboard = () => {
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         <SidebarMenuButton>
+                          <AlertTriangle className="h-4 w-4" />
+                          <span>RNC</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
                           <FileWarning className="h-4 w-4" />
                           <span>TOP</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <Shield className="h-4 w-4" />
+                          <span>RDS</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <ClipboardCheck className="h-4 w-4" />
+                          <span>Checklists</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
@@ -217,8 +229,14 @@ const OgmoDashboard = () => {
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         <SidebarMenuButton>
-                          <Ambulance className="h-4 w-4" />
-                          <span>Acidentes de Trabalho</span>
+                          <FileSearch className="h-4 w-4" />
+                          <span>Investigação de Acidentes/Incidentes</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton>
+                          <CalendarCheck className="h-4 w-4" />
+                          <span>Reuniões</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     </SidebarMenu>
@@ -264,34 +282,12 @@ const OgmoDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Checklists</CardTitle>
-                  <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Acidentes de Trabalho</CardTitle>
+                  <Ambulance className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.checklists}</div>
-                  <p className="text-xs text-muted-foreground">documentos registrados</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">RNC</CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.rnc}</div>
-                  <p className="text-xs text-muted-foreground">relatórios de não conformidade</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">RDS</CardTitle>
-                  <Shield className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.rds}</div>
-                  <p className="text-xs text-muted-foreground">reuniões diárias de segurança</p>
+                  <div className="text-2xl font-bold">{stats.acidentes}</div>
+                  <p className="text-xs text-muted-foreground">acidentes registrados</p>
                 </CardContent>
               </Card>
 
@@ -308,12 +304,45 @@ const OgmoDashboard = () => {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">RNC</CardTitle>
+                  <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.rnc}</div>
+                  <p className="text-xs text-muted-foreground">relatórios de não conformidade</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium">TOP</CardTitle>
                   <FileWarning className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.top}</div>
                   <p className="text-xs text-muted-foreground">termos de ocorrência portuária</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">RDS</CardTitle>
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.rds}</div>
+                  <p className="text-xs text-muted-foreground">reuniões diárias de segurança</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Checklists</CardTitle>
+                  <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.checklists}</div>
+                  <p className="text-xs text-muted-foreground">documentos registrados</p>
                 </CardContent>
               </Card>
 
@@ -330,12 +359,23 @@ const OgmoDashboard = () => {
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Acidentes de Trabalho</CardTitle>
-                  <Ambulance className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Investigação de Acidentes/Incidentes</CardTitle>
+                  <FileSearch className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.acidentes}</div>
-                  <p className="text-xs text-muted-foreground">acidentes registrados</p>
+                  <div className="text-2xl font-bold">{stats.investigacoes}</div>
+                  <p className="text-xs text-muted-foreground">investigações realizadas</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Reuniões</CardTitle>
+                  <CalendarCheck className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.reunioes}</div>
+                  <p className="text-xs text-muted-foreground">reuniões realizadas</p>
                 </CardContent>
               </Card>
             </div>
