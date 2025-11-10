@@ -318,7 +318,11 @@ const AdminDashboard = () => {
                 </TableHeader>
                 <TableBody>
                   {ogmos.map((ogmo) => (
-                    <TableRow key={ogmo.id}>
+                    <TableRow 
+                      key={ogmo.id} 
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => navigate(`/ogmo/${ogmo.id}`)}
+                    >
                       <TableCell className="font-medium">{ogmo.nome}</TableCell>
                       <TableCell>{ogmo.cnpj}</TableCell>
                       <TableCell>{ogmo.telefone || "-"}</TableCell>
@@ -327,7 +331,10 @@ const AdminDashboard = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(ogmo.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(ogmo.id);
+                          }}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
