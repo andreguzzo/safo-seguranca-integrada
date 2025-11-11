@@ -23,7 +23,7 @@ import {
   Activity, 
   FileWarning, 
   ClipboardCheck,
-  Building2,
+  Container,
   Users,
   Briefcase,
   Search,
@@ -154,19 +154,19 @@ const OgmoDashboard = () => {
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton>
-                      <Building2 className="h-4 w-4" />
+                      <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton>
-                      <Users className="h-4 w-4" />
+                      <Briefcase className="h-4 w-4" />
                       <span>Operadores Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton>
-                      <Briefcase className="h-4 w-4" />
+                      <Users className="h-4 w-4" />
                       <span>TPA's</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
