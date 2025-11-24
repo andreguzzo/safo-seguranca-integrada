@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertas_operadores: {
+        Row: {
+          cpf_operador: string
+          created_at: string
+          data_evento: string
+          id: string
+          nome_operador: string
+          ogmo_id: string
+          operador_id: string | null
+          tipo: string
+          visualizado: boolean
+        }
+        Insert: {
+          cpf_operador: string
+          created_at?: string
+          data_evento?: string
+          id?: string
+          nome_operador: string
+          ogmo_id: string
+          operador_id?: string | null
+          tipo: string
+          visualizado?: boolean
+        }
+        Update: {
+          cpf_operador?: string
+          created_at?: string
+          data_evento?: string
+          id?: string
+          nome_operador?: string
+          ogmo_id?: string
+          operador_id?: string | null
+          tipo?: string
+          visualizado?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alertas_operadores_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertas_operadores_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "operadores_portuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       configuracoes_financeiras: {
         Row: {
           id: string
@@ -248,6 +299,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      count_billable_operators: {
+        Args: { _ogmo_id: string; _reference_month: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
