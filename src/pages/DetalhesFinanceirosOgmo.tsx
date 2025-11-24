@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin } from "lucide-react";
+import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -25,6 +27,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface OgmoDetalhes {
   id: string;
@@ -34,6 +44,7 @@ interface OgmoDetalhes {
   email: string | null;
   endereco: string | null;
   bloqueado: boolean;
+  valor_por_operador: number | null;
 }
 
 interface Mensalidade {
@@ -55,6 +66,9 @@ export default function DetalhesFinanceirosOgmo() {
   const [mensalidades, setMensalidades] = useState<Mensalidade[]>([]);
   const [quantidadeOperadores, setQuantidadeOperadores] = useState(0);
   const [valorPorOperador, setValorPorOperador] = useState(0);
+  const [valorPadraoGlobal, setValorPadraoGlobal] = useState(0);
+  const [novoValor, setNovoValor] = useState(0);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -110,13 +124,18 @@ export default function DetalhesFinanceirosOgmo() {
 
     setQuantidadeOperadores(count || 0);
 
-    // Buscar configuração
+    // Buscar configuração global
     const { data: config } = await supabase
       .from("configuracoes_financeiras")
       .select("valor_por_operador")
       .single();
 
-    setValorPorOperador(config?.valor_por_operador || 0);
+    setValorPadraoGlobal(config?.valor_por_operador || 0);
+    
+    // Usar valor customizado do OGMO ou valor padrão global
+    const valorFinal = ogmoData.valor_por_operador || config?.valor_por_operador || 0;
+    setValorPorOperador(valorFinal);
+    setNovoValor(valorFinal);
 
     // Buscar mensalidades
     const { data: mensalidadesData } = await supabase
@@ -150,6 +169,30 @@ export default function DetalhesFinanceirosOgmo() {
           ? "O acesso foi restaurado"
           : "O acesso foi bloqueado por inadimplência",
       });
+      fetchDados();
+    }
+  };
+
+  const handleUpdateValor = async () => {
+    if (!ogmo) return;
+
+    const { error } = await supabase
+      .from("ogmos")
+      .update({ valor_por_operador: novoValor })
+      .eq("id", ogmo.id);
+
+    if (error) {
+      toast({
+        title: "Erro ao atualizar valor",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Valor atualizado",
+        description: "Valor por operador atualizado com sucesso",
+      });
+      setShowEditDialog(false);
       fetchDados();
     }
   };
@@ -271,15 +314,63 @@ export default function DetalhesFinanceirosOgmo() {
                   )}
                 </div>
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Informações Financeiras</h3>
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-lg">Informações Financeiras</h3>
+                    <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Pencil className="h-3 w-3 mr-1" />
+                          Editar Valor
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Editar Valor por Operador</DialogTitle>
+                          <DialogDescription>
+                            Defina um valor customizado para este OGMO. Deixe em branco para usar o valor padrão global (R$ {valorPadraoGlobal.toFixed(2)}).
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="novoValor">Valor por Operador (R$)</Label>
+                            <Input
+                              id="novoValor"
+                              type="number"
+                              step="0.01"
+                              value={novoValor}
+                              onChange={(e) => setNovoValor(parseFloat(e.target.value))}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button onClick={handleUpdateValor} className="flex-1">
+                              Salvar
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setNovoValor(valorPadraoGlobal);
+                              }}
+                            >
+                              Usar Padrão
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Operadores cadastrados:</span>
                       <span className="font-bold">{quantidadeOperadores}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Valor por operador:</span>
-                      <span className="font-bold">R$ {valorPorOperador.toFixed(2)}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">R$ {valorPorOperador.toFixed(2)}</span>
+                        {ogmo.valor_por_operador && (
+                          <Badge variant="secondary" className="text-xs">Customizado</Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex justify-between pt-2 border-t">
                       <span className="font-semibold">Valor mensal total:</span>
