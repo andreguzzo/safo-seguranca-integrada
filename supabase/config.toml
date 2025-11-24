@@ -1,1 +1,4 @@
 project_id = "kazjpebvshepisrbahqu"
+
+[functions.gerar-mensalidades-mensais]
+verify_jwt = false
