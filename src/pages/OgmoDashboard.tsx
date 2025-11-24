@@ -34,7 +34,8 @@ import {
   ChevronDown,
   Ambulance,
   FileSearch,
-  CalendarCheck
+  CalendarCheck,
+  UserCog
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -168,6 +169,12 @@ const OgmoDashboard = () => {
                     <SidebarMenuButton>
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}>
+                      <UserCog className="h-4 w-4" />
+                      <span>Funcionários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
