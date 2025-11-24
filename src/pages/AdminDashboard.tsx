@@ -292,62 +292,62 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img src={safoLogo} alt="Safo Logo" className="h-12" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg shadow-sm">
+        <div className="container mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <img src={safoLogo} alt="Safo Logo" className="h-14 drop-shadow-lg" />
             <div>
-              <h1 className="text-2xl font-bold">Painel Administrativo</h1>
-              <p className="text-sm text-muted-foreground">Gestão de OGMO's</p>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Painel Administrativo
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Gestão de Órgãos Gestores de Mão de Obra</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sair
-            </Button>
-          </div>
+          <Button variant="outline" onClick={handleLogout} className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors">
+            <LogOut className="h-4 w-4 mr-2" />
+            Sair
+          </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+      <main className="container mx-auto px-6 py-10">
+        <div className="mb-8">
           <Button 
             variant="default" 
             size="lg"
             onClick={() => navigate("/admin/financeiro")}
-            className="w-full md:w-auto"
+            className="w-full md:w-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
             <DollarSign className="h-5 w-5 mr-2" />
             Controle Financeiro
           </Button>
         </div>
         
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <Card className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/30 to-transparent">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle>OGMO's Cadastrados</CardTitle>
-                <CardDescription>
-                  Gerencie os Órgãos Gestores de Mão de Obra
+                <CardTitle className="text-2xl font-bold">OGMO's Cadastrados</CardTitle>
+                <CardDescription className="text-base mt-2">
+                  Gerencie os Órgãos Gestores de Mão de Obra registrados no sistema
                 </CardDescription>
               </div>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button className="shadow-md hover:shadow-lg transition-all duration-200">
                     <Plus className="h-4 w-4 mr-2" />
                     Novo OGMO
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm">
                   <DialogHeader>
-                    <DialogTitle>Cadastrar Novo OGMO</DialogTitle>
-                    <DialogDescription>
-                      Preencha os dados do novo OGMO
+                    <DialogTitle className="text-2xl">Cadastrar Novo OGMO</DialogTitle>
+                    <DialogDescription className="text-base">
+                      Preencha os dados do novo Órgão Gestor de Mão de Obra
                     </DialogDescription>
                   </DialogHeader>
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="nome">Nome do OGMO *</Label>
                       <Input
@@ -392,8 +392,8 @@ const AdminDashboard = () => {
                       />
                     </div>
 
-                    <div className="border-t pt-4 mt-4">
-                      <h3 className="text-lg font-semibold mb-4">Usuário Master OGMO</h3>
+                    <div className="border-t border-border/50 pt-6 mt-6 bg-muted/30 rounded-lg p-4 -mx-1">
+                      <h3 className="text-lg font-semibold mb-4 text-primary">Usuário Master OGMO</h3>
                       
                       <div className="space-y-2">
                         <Label htmlFor="email_master">Email *</Label>
@@ -419,7 +419,7 @@ const AdminDashboard = () => {
                       </div>
                     </div>
 
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full shadow-md hover:shadow-lg transition-all">
                       Cadastrar OGMO e Usuário
                     </Button>
                   </form>
@@ -427,77 +427,92 @@ const AdminDashboard = () => {
               </Dialog>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {loading ? (
-              <p className="text-center text-muted-foreground py-8">Carregando...</p>
+              <div className="text-center py-16">
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
+                <p className="text-muted-foreground">Carregando dados...</p>
+              </div>
             ) : ogmos.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                Nenhum OGMO cadastrado ainda
-              </p>
+              <div className="text-center py-16">
+                <div className="mx-auto w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+                  <Plus className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <p className="text-muted-foreground text-lg">
+                  Nenhum OGMO cadastrado ainda
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Clique em "Novo OGMO" para começar
+                </p>
+              </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Telefone</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ogmos.map((ogmo) => (
-                    <TableRow 
-                      key={ogmo.id} 
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/ogmo/${ogmo.id}`)}
-                    >
-                      <TableCell className="font-medium">{ogmo.nome}</TableCell>
-                      <TableCell>{ogmo.cnpj}</TableCell>
-                      <TableCell>{ogmo.telefone || "-"}</TableCell>
-                      <TableCell>{ogmo.email || "-"}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(ogmo);
-                            }}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(ogmo.id);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className="rounded-lg border border-border/50 overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 hover:bg-muted/50">
+                      <TableHead className="font-semibold">Nome</TableHead>
+                      <TableHead className="font-semibold">CNPJ</TableHead>
+                      <TableHead className="font-semibold">Telefone</TableHead>
+                      <TableHead className="font-semibold">Email</TableHead>
+                      <TableHead className="text-right font-semibold">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {ogmos.map((ogmo) => (
+                      <TableRow 
+                        key={ogmo.id} 
+                        className="cursor-pointer hover:bg-muted/30 transition-colors"
+                        onClick={() => navigate(`/ogmo/${ogmo.id}`)}
+                      >
+                        <TableCell className="font-medium">{ogmo.nome}</TableCell>
+                        <TableCell className="text-muted-foreground">{ogmo.cnpj}</TableCell>
+                        <TableCell className="text-muted-foreground">{ogmo.telefone || "-"}</TableCell>
+                        <TableCell className="text-muted-foreground">{ogmo.email || "-"}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(ogmo);
+                              }}
+                              className="hover:bg-primary/10 hover:text-primary transition-colors"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(ogmo.id);
+                              }}
+                              className="hover:bg-destructive/10 hover:text-destructive transition-colors"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle>Editar OGMO</DialogTitle>
-              <DialogDescription>
-                Edite os dados do OGMO e do usuário master
+              <DialogTitle className="text-2xl">Editar OGMO</DialogTitle>
+              <DialogDescription className="text-base">
+                Edite os dados do Órgão Gestor de Mão de Obra e do usuário master
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleUpdateOgmo} className="space-y-4">
+            <form onSubmit={handleUpdateOgmo} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="edit_nome">Nome do OGMO *</Label>
                 <Input
@@ -550,8 +565,8 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              <div className="border-t pt-4 mt-4">
-                <h3 className="text-lg font-semibold mb-4">Usuário Master OGMO</h3>
+              <div className="border-t border-border/50 pt-6 mt-6 bg-muted/30 rounded-lg p-4 -mx-1">
+                <h3 className="text-lg font-semibold mb-4 text-primary">Usuário Master OGMO</h3>
                 
                 <div className="space-y-2">
                   <Label htmlFor="edit_email_master">Email *</Label>
@@ -576,11 +591,11 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1 hover:bg-muted transition-colors">
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex-1">
+                <Button type="submit" className="flex-1 shadow-md hover:shadow-lg transition-all">
                   Salvar Alterações
                 </Button>
               </div>
