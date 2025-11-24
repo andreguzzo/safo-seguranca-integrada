@@ -30,7 +30,7 @@ export const Hero = () => {
       <div className="container mx-auto max-w-7xl relative z-10">
         <div className="text-center space-y-8">
           <div className="inline-block mb-4">
-            <img src="/lovable-uploads/2a389ffd-6e61-4350-b59a-2109d92dbee5.png" alt="Safo Logo" className="h-24 sm:h-32 mx-auto" />
+            
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-foreground leading-tight">
