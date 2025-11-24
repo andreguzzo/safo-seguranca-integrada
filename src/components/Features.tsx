@@ -36,28 +36,28 @@ export const Features = () => {
   ];
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">
+    <section className="py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
             Funcionalidades Integradas
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Uma plataforma completa para gerenciar todos os aspectos da segurança do trabalho portuário
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Uma plataforma completa para gerenciar todos os aspectos da segurança do trabalho portuário com tecnologia de ponta
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <Card key={index} className="border-border hover:border-accent transition-smooth shadow-soft hover:shadow-medium">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-secondary flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-accent" />
+            <Card key={index} className="border-border/50 hover:border-primary/50 transition-smooth shadow-soft hover:shadow-elegant bg-card/80 backdrop-blur-sm group">
+              <CardHeader className="pb-4">
+                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-smooth">
+                  <feature.icon className="h-8 w-8 text-primary" />
                 </div>
-                <CardTitle className="text-xl text-primary">{feature.title}</CardTitle>
+                <CardTitle className="text-2xl text-foreground font-bold">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{feature.description}</p>
+                <p className="text-muted-foreground text-base leading-relaxed">{feature.description}</p>
               </CardContent>
             </Card>
           ))}
