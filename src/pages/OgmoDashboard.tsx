@@ -185,65 +185,81 @@ const OgmoDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
-        <p className="text-lg">Carregando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
+          <p className="text-lg text-muted-foreground">Carregando dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full flex bg-gradient-hero">
-        <Sidebar className="border-r">
-          <div className="p-4 border-b">
-            <img src={safoLogo} alt="Safo Logo" className="h-10 mb-2" />
+      <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
+        <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-sm">
+          <div className="p-5 border-b border-border/50 bg-gradient-to-r from-muted/30 to-transparent">
+            <img src={safoLogo} alt="Safo Logo" className="h-12 mb-3 drop-shadow-lg" />
             <h2 
-              className="font-bold text-lg truncate cursor-pointer hover:text-primary transition-colors"
+              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-200 hover:scale-[1.02]"
               onClick={handleOpenOgmoDialog}
+              title={ogmo?.nome}
             >
               {ogmo?.nome}
             </h2>
-            <p className="text-sm text-muted-foreground">{ogmo?.cnpj}</p>
+            <p className="text-sm text-muted-foreground mt-1">{ogmo?.cnpj}</p>
           </div>
 
           <SidebarContent>
             <Collapsible defaultOpen>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
                     Cadastros
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
                       <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
                       <Briefcase className="h-4 w-4" />
                       <span>Operadores Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
                       <UserCog className="h-4 w-4" />
                       <span>Funcionários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
                       <Scale className="h-4 w-4" />
                       <span>Sindicatos</span>
                     </SidebarMenuButton>
@@ -257,64 +273,64 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
                     Documentos
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <Ambulance className="h-4 w-4" />
                           <span>Acidentes de Trabalho</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <Activity className="h-4 w-4" />
                           <span>Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <AlertTriangle className="h-4 w-4" />
                           <span>RNC</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <FileWarning className="h-4 w-4" />
                           <span>TOP</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <Shield className="h-4 w-4" />
                           <span>RDS</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <ClipboardCheck className="h-4 w-4" />
                           <span>Checklists</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <FileText className="h-4 w-4" />
                           <span>PT</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <FileSearch className="h-4 w-4" />
                           <span>Investigação de Acidentes/Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                           <CalendarCheck className="h-4 w-4" />
                           <span>Reuniões</span>
                         </SidebarMenuButton>
@@ -326,11 +342,11 @@ const OgmoDashboard = () => {
             </Collapsible>
 
             <SidebarGroup>
-              <SidebarGroupLabel>Relatórios</SidebarGroupLabel>
+              <SidebarGroupLabel className="px-2">Relatórios</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
                       <BarChart3 className="h-4 w-4" />
                       <span>Relatórios Personalizados</span>
                     </SidebarMenuButton>
@@ -342,120 +358,144 @@ const OgmoDashboard = () => {
         </Sidebar>
 
         <div className="flex-1 flex flex-col">
-          <header className="border-b bg-card/50 backdrop-blur-sm">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger />
+          <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg shadow-sm">
+            <div className="container mx-auto px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <SidebarTrigger className="hover:bg-muted/50 transition-colors" />
                 <div>
-                  <h1 className="text-2xl font-bold">Dashboard</h1>
-                  <p className="text-sm text-muted-foreground">Visão geral dos documentos</p>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    Dashboard
+                  </h1>
+                  <p className="text-sm text-muted-foreground mt-1">Visão geral dos documentos e estatísticas</p>
                 </div>
               </div>
-              <Button variant="outline" onClick={handleLogout}>
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+                className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sair
               </Button>
             </div>
           </header>
 
-          <main className="flex-1 container mx-auto px-4 py-8">
+          <main className="flex-1 container mx-auto px-6 py-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Acidentes de Trabalho</CardTitle>
-                  <Ambulance className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">Acidentes de Trabalho</CardTitle>
+                  <div className="p-2 rounded-lg bg-destructive/10">
+                    <Ambulance className="h-5 w-5 text-destructive" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.acidentes}</div>
-                  <p className="text-xs text-muted-foreground">acidentes registrados</p>
+                  <div className="text-3xl font-bold text-destructive">{stats.acidentes}</div>
+                  <p className="text-xs text-muted-foreground mt-1">acidentes registrados</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Incidentes</CardTitle>
-                  <Activity className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">Incidentes</CardTitle>
+                  <div className="p-2 rounded-lg bg-orange-500/10">
+                    <Activity className="h-5 w-5 text-orange-500" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.incidentes}</div>
-                  <p className="text-xs text-muted-foreground">incidentes registrados</p>
+                  <div className="text-3xl font-bold text-orange-500">{stats.incidentes}</div>
+                  <p className="text-xs text-muted-foreground mt-1">incidentes registrados</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">RNC</CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">RNC</CardTitle>
+                  <div className="p-2 rounded-lg bg-yellow-500/10">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.rnc}</div>
-                  <p className="text-xs text-muted-foreground">relatórios de não conformidade</p>
+                  <div className="text-3xl font-bold text-yellow-600">{stats.rnc}</div>
+                  <p className="text-xs text-muted-foreground mt-1">relatórios de não conformidade</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">TOP</CardTitle>
-                  <FileWarning className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">TOP</CardTitle>
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    <FileWarning className="h-5 w-5 text-primary" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.top}</div>
-                  <p className="text-xs text-muted-foreground">termos de ocorrência portuária</p>
+                  <div className="text-3xl font-bold text-primary">{stats.top}</div>
+                  <p className="text-xs text-muted-foreground mt-1">termos de ocorrência portuária</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">RDS</CardTitle>
-                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">RDS</CardTitle>
+                  <div className="p-2 rounded-lg bg-green-500/10">
+                    <Shield className="h-5 w-5 text-green-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.rds}</div>
-                  <p className="text-xs text-muted-foreground">reuniões diárias de segurança</p>
+                  <div className="text-3xl font-bold text-green-600">{stats.rds}</div>
+                  <p className="text-xs text-muted-foreground mt-1">reuniões diárias de segurança</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Checklists</CardTitle>
-                  <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">Checklists</CardTitle>
+                  <div className="p-2 rounded-lg bg-blue-500/10">
+                    <ClipboardCheck className="h-5 w-5 text-blue-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.checklists}</div>
-                  <p className="text-xs text-muted-foreground">documentos registrados</p>
+                  <div className="text-3xl font-bold text-blue-600">{stats.checklists}</div>
+                  <p className="text-xs text-muted-foreground mt-1">documentos registrados</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">PT</CardTitle>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">PT</CardTitle>
+                  <div className="p-2 rounded-lg bg-purple-500/10">
+                    <FileText className="h-5 w-5 text-purple-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.pt}</div>
-                  <p className="text-xs text-muted-foreground">permissões de trabalho</p>
+                  <div className="text-3xl font-bold text-purple-600">{stats.pt}</div>
+                  <p className="text-xs text-muted-foreground mt-1">permissões de trabalho</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Investigação de Acidentes/Incidentes</CardTitle>
-                  <FileSearch className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">Investigação de Acidentes</CardTitle>
+                  <div className="p-2 rounded-lg bg-indigo-500/10">
+                    <FileSearch className="h-5 w-5 text-indigo-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.investigacoes}</div>
-                  <p className="text-xs text-muted-foreground">investigações realizadas</p>
+                  <div className="text-3xl font-bold text-indigo-600">{stats.investigacoes}</div>
+                  <p className="text-xs text-muted-foreground mt-1">investigações realizadas</p>
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium">Reuniões</CardTitle>
-                  <CalendarCheck className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-semibold">Reuniões</CardTitle>
+                  <div className="p-2 rounded-lg bg-teal-500/10">
+                    <CalendarCheck className="h-5 w-5 text-teal-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.reunioes}</div>
-                  <p className="text-xs text-muted-foreground">reuniões realizadas</p>
+                  <div className="text-3xl font-bold text-teal-600">{stats.reunioes}</div>
+                  <p className="text-xs text-muted-foreground mt-1">reuniões realizadas</p>
                 </CardContent>
               </Card>
             </div>
@@ -463,14 +503,14 @@ const OgmoDashboard = () => {
         </div>
 
         <Dialog open={ogmoDialogOpen} onOpenChange={setOgmoDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle>Dados do OGMO</DialogTitle>
-              <DialogDescription>
-                Visualize os dados do OGMO. Apenas o contato de emergência pode ser editado aqui.
+              <DialogTitle className="text-2xl">Dados do OGMO</DialogTitle>
+              <DialogDescription className="text-base">
+                Visualize os dados cadastrais do OGMO. Apenas o contato de emergência pode ser editado aqui.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSaveOgmo} className="space-y-4">
+            <form onSubmit={handleSaveOgmo} className="space-y-5">
               <div>
                 <Label htmlFor="nome">Nome</Label>
                 <Input
@@ -528,8 +568,21 @@ const OgmoDashboard = () => {
                   placeholder="Ex: (27) 99999-9999"
                 />
               </div>
-              <div className="flex gap-2 justify-end">
-                <Button type="submit">Salvar Contato de Emergência</Button>
+              <div className="flex gap-3 justify-end pt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setOgmoDialogOpen(false)}
+                  className="hover:bg-muted transition-colors"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit"
+                  className="shadow-md hover:shadow-lg transition-all"
+                >
+                  Salvar Contato de Emergência
+                </Button>
               </div>
             </form>
           </DialogContent>
