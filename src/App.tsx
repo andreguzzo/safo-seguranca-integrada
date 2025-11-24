@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import OgmoDashboard from "./pages/OgmoDashboard";
 import FuncionariosOgmo from "./pages/FuncionariosOgmo";
+import FuncionariosSindicato from "./pages/FuncionariosSindicato";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />
+          <Route path="/ogmo/:ogmoId/sindicatos" element={<FuncionariosSindicato />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

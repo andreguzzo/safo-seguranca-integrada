@@ -35,7 +35,8 @@ import {
   Ambulance,
   FileSearch,
   CalendarCheck,
-  UserCog
+  UserCog,
+  Scale
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -175,6 +176,12 @@ const OgmoDashboard = () => {
                     <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}>
                       <UserCog className="h-4 w-4" />
                       <span>Funcionários</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}>
+                      <Scale className="h-4 w-4" />
+                      <span>Sindicatos</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

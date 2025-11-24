@@ -116,6 +116,7 @@ export type Database = {
         | "ogmo"
         | "trabalhador_avulso"
         | "trabalhador_terceirizado"
+        | "sindicato"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -250,6 +251,7 @@ export const Constants = {
         "ogmo",
         "trabalhador_avulso",
         "trabalhador_terceirizado",
+        "sindicato",
       ],
     },
   },
