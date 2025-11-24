@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell, CheckCircle, FileText, MoreVertical } from "lucide-react";
+import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell, CheckCircle, FileText, MoreVertical, Upload } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -88,6 +88,9 @@ export default function DetalhesFinanceirosOgmo() {
   const [valorPadraoGlobal, setValorPadraoGlobal] = useState(0);
   const [novoValor, setNovoValor] = useState(0);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -325,6 +328,70 @@ export default function DetalhesFinanceirosOgmo() {
     }
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const extension = file.name.toLowerCase();
+      if (extension.endsWith('.csv') || extension.endsWith('.ofx')) {
+        setSelectedFile(file);
+      } else {
+        toast({
+          title: "Formato inválido",
+          description: "Por favor, selecione um arquivo CSV ou OFX",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleImportExtrato = async () => {
+    if (!selectedFile || !ogmo) return;
+
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      formData.append('ogmoId', ogmo.id);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Não autenticado");
+
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/processar-extrato-bancario`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Erro ao processar extrato');
+      }
+
+      toast({
+        title: "Extrato processado com sucesso",
+        description: `${result.conciliados} de ${result.total} pagamentos conciliados automaticamente`,
+      });
+
+      setShowImportDialog(false);
+      setSelectedFile(null);
+      fetchDados();
+    } catch (error) {
+      toast({
+        title: "Erro ao importar extrato",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-background p-8">Carregando...</div>;
   }
@@ -552,10 +619,71 @@ export default function DetalhesFinanceirosOgmo() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Histórico de Mensalidades</CardTitle>
-              <CardDescription>
-                Registro de todas as mensalidades geradas para este OGMO
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Histórico de Mensalidades</CardTitle>
+                  <CardDescription>
+                    Registro de todas as mensalidades geradas para este OGMO
+                  </CardDescription>
+                </div>
+                <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Importar Extrato
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Importar Extrato Bancário</DialogTitle>
+                      <DialogDescription>
+                        Faça upload do arquivo CSV ou OFX do seu extrato bancário para conciliar automaticamente os pagamentos.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="extrato">Arquivo (CSV ou OFX)</Label>
+                        <Input
+                          id="extrato"
+                          type="file"
+                          accept=".csv,.ofx"
+                          onChange={handleFileSelect}
+                        />
+                        {selectedFile && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Arquivo selecionado: {selectedFile.name}
+                          </p>
+                        )}
+                      </div>
+                      <div className="bg-muted p-4 rounded-lg">
+                        <p className="text-sm font-medium mb-2">Formato esperado CSV:</p>
+                        <code className="text-xs">Data;Descrição;CNPJ;Valor</code>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          O sistema irá conciliar automaticamente pagamentos baseado no CNPJ e valor da mensalidade.
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleImportExtrato}
+                          disabled={!selectedFile || importing}
+                          className="flex-1"
+                        >
+                          {importing ? "Processando..." : "Importar e Conciliar"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setShowImportDialog(false);
+                            setSelectedFile(null);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </CardHeader>
             <CardContent>
               {mensalidades.length === 0 ? (
