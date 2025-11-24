@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, LogOut, Trash2, Pencil } from "lucide-react";
+import { Plus, LogOut, Trash2, Pencil, DollarSign } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 
 interface OGMO {
@@ -187,10 +187,16 @@ const AdminDashboard = () => {
               <p className="text-sm text-muted-foreground">Gestão de OGMO's</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => navigate("/admin/financeiro")}>
+              <DollarSign className="h-4 w-4 mr-2" />
+              Controle Financeiro
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 

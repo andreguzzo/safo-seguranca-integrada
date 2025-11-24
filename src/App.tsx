@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
+import FinanceiroAdmin from "./pages/FinanceiroAdmin";
+import DetalhesFinanceirosOgmo from "./pages/DetalhesFinanceirosOgmo";
 import OgmoDashboard from "./pages/OgmoDashboard";
 import FuncionariosOgmo from "./pages/FuncionariosOgmo";
 import FuncionariosSindicato from "./pages/FuncionariosSindicato";
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/financeiro" element={<FinanceiroAdmin />} />
+          <Route path="/admin/financeiro/:ogmoId" element={<DetalhesFinanceirosOgmo />} />
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />
           <Route path="/ogmo/:ogmoId/sindicatos" element={<FuncionariosSindicato />} />
