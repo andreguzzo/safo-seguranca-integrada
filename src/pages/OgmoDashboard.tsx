@@ -198,8 +198,14 @@ const OgmoDashboard = () => {
     <SidebarProvider>
       <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
         <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-sm">
-          <div className="p-5 border-b border-border/50 bg-gradient-to-r from-muted/30 to-transparent">
-            <img src={safoLogo} alt="Safo Logo" className="h-12 mb-3 drop-shadow-lg" />
+          <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-transparent">
+            <div className="flex items-center justify-center mb-6 py-2">
+              <img 
+                src={safoLogo} 
+                alt="Safo Logo" 
+                className="h-24 drop-shadow-2xl hover:scale-105 transition-transform duration-300" 
+              />
+            </div>
             <h2 
               className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-200 hover:scale-[1.02]"
               onClick={handleOpenOgmoDialog}
