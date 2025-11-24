@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell } from "lucide-react";
+import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell, CheckCircle, FileText, MoreVertical } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -35,6 +35,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface OgmoDetalhes {
   id: string;
@@ -56,6 +63,7 @@ interface Mensalidade {
   data_pagamento: string | null;
   status: string;
   cnpj_pagador: string | null;
+  nf_emitida: boolean;
 }
 
 interface Alerta {
@@ -270,6 +278,50 @@ export default function DetalhesFinanceirosOgmo() {
       toast({
         title: "Alertas marcados como lidos",
       });
+    }
+  };
+
+  const handleMarcarQuitacao = async (mensalidadeId: string) => {
+    const { error } = await supabase
+      .from("mensalidades_ogmo")
+      .update({ 
+        status: "pago",
+        data_pagamento: new Date().toISOString()
+      })
+      .eq("id", mensalidadeId);
+
+    if (error) {
+      toast({
+        title: "Erro ao marcar quitação",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Quitação registrada",
+        description: "Pagamento marcado como realizado",
+      });
+      fetchDados();
+    }
+  };
+
+  const handleToggleNF = async (mensalidadeId: string, nfEmitida: boolean) => {
+    const { error } = await supabase
+      .from("mensalidades_ogmo")
+      .update({ nf_emitida: !nfEmitida })
+      .eq("id", mensalidadeId);
+
+    if (error) {
+      toast({
+        title: "Erro ao atualizar NF",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: nfEmitida ? "NF desmarcada" : "NF marcada como emitida",
+      });
+      fetchDados();
     }
   };
 
@@ -520,6 +572,8 @@ export default function DetalhesFinanceirosOgmo() {
                       <TableHead>Vencimento</TableHead>
                       <TableHead>Pagamento</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>NF</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -540,6 +594,44 @@ export default function DetalhesFinanceirosOgmo() {
                             : "-"}
                         </TableCell>
                         <TableCell>{getStatusBadge(mensalidade)}</TableCell>
+                        <TableCell>
+                          {mensalidade.nf_emitida ? (
+                            <Badge className="bg-green-500">
+                              <FileText className="h-3 w-3 mr-1" />
+                              Emitida
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">Pendente</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {mensalidade.status !== "pago" && (
+                                <>
+                                  <DropdownMenuItem
+                                    onClick={() => handleMarcarQuitacao(mensalidade.id)}
+                                  >
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Marcar como Pago
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                </>
+                              )}
+                              <DropdownMenuItem
+                                onClick={() => handleToggleNF(mensalidade.id, mensalidade.nf_emitida)}
+                              >
+                                <FileText className="h-4 w-4 mr-2" />
+                                {mensalidade.nf_emitida ? "Desmarcar NF" : "Marcar NF Emitida"}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
