@@ -14,8 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
+      configuracoes_financeiras: {
+        Row: {
+          id: string
+          updated_at: string | null
+          valor_por_operador: number
+        }
+        Insert: {
+          id?: string
+          updated_at?: string | null
+          valor_por_operador?: number
+        }
+        Update: {
+          id?: string
+          updated_at?: string | null
+          valor_por_operador?: number
+        }
+        Relationships: []
+      }
+      extratos_bancarios: {
+        Row: {
+          created_at: string | null
+          data_importacao: string | null
+          id: string
+          importado_por: string | null
+          nome_arquivo: string
+          quantidade_conciliados: number
+          quantidade_registros: number
+        }
+        Insert: {
+          created_at?: string | null
+          data_importacao?: string | null
+          id?: string
+          importado_por?: string | null
+          nome_arquivo: string
+          quantidade_conciliados?: number
+          quantidade_registros?: number
+        }
+        Update: {
+          created_at?: string | null
+          data_importacao?: string | null
+          id?: string
+          importado_por?: string | null
+          nome_arquivo?: string
+          quantidade_conciliados?: number
+          quantidade_registros?: number
+        }
+        Relationships: []
+      }
+      mensalidades_ogmo: {
+        Row: {
+          cnpj_pagador: string | null
+          created_at: string | null
+          data_pagamento: string | null
+          data_vencimento: string
+          id: string
+          mes_referencia: string
+          observacoes: string | null
+          ogmo_id: string
+          quantidade_operadores: number
+          status: string
+          updated_at: string | null
+          valor_total: number
+        }
+        Insert: {
+          cnpj_pagador?: string | null
+          created_at?: string | null
+          data_pagamento?: string | null
+          data_vencimento: string
+          id?: string
+          mes_referencia: string
+          observacoes?: string | null
+          ogmo_id: string
+          quantidade_operadores?: number
+          status?: string
+          updated_at?: string | null
+          valor_total: number
+        }
+        Update: {
+          cnpj_pagador?: string | null
+          created_at?: string | null
+          data_pagamento?: string | null
+          data_vencimento?: string
+          id?: string
+          mes_referencia?: string
+          observacoes?: string | null
+          ogmo_id?: string
+          quantidade_operadores?: number
+          status?: string
+          updated_at?: string | null
+          valor_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mensalidades_ogmo_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ogmos: {
         Row: {
+          bloqueado: boolean | null
           cnpj: string
           created_at: string
           email: string | null
@@ -27,6 +129,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          bloqueado?: boolean | null
           cnpj: string
           created_at?: string
           email?: string | null
@@ -38,6 +141,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          bloqueado?: boolean | null
           cnpj?: string
           created_at?: string
           email?: string | null
@@ -49,6 +153,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      operadores_portuarios: {
+        Row: {
+          cpf: string
+          created_at: string | null
+          email: string | null
+          id: string
+          nome: string
+          ogmo_id: string
+          telefone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cpf: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          nome: string
+          ogmo_id: string
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cpf?: string
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          nome?: string
+          ogmo_id?: string
+          telefone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "operadores_portuarios_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
