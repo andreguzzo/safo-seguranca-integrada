@@ -19,33 +19,45 @@ export type Database = {
           cpf_operador: string
           created_at: string
           data_evento: string
+          descricao: string | null
+          documento_id: string | null
           id: string
+          lida: boolean | null
           nome_operador: string
           ogmo_id: string
           operador_id: string | null
           tipo: string
+          tipo_documento: string | null
           visualizado: boolean
         }
         Insert: {
           cpf_operador: string
           created_at?: string
           data_evento?: string
+          descricao?: string | null
+          documento_id?: string | null
           id?: string
+          lida?: boolean | null
           nome_operador: string
           ogmo_id: string
           operador_id?: string | null
           tipo: string
+          tipo_documento?: string | null
           visualizado?: boolean
         }
         Update: {
           cpf_operador?: string
           created_at?: string
           data_evento?: string
+          descricao?: string | null
+          documento_id?: string | null
           id?: string
+          lida?: boolean | null
           nome_operador?: string
           ogmo_id?: string
           operador_id?: string | null
           tipo?: string
+          tipo_documento?: string | null
           visualizado?: boolean
         }
         Relationships: [
