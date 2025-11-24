@@ -36,10 +36,14 @@ import {
   FileSearch,
   CalendarCheck,
   UserCog,
-  Scale
+  Scale,
+  Edit
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface OGMO {
   id: string;
@@ -48,6 +52,7 @@ interface OGMO {
   endereco: string | null;
   telefone: string | null;
   email: string | null;
+  contato_emergencia: string | null;
 }
 
 interface DocumentStats {
@@ -79,6 +84,16 @@ const OgmoDashboard = () => {
     reunioes: 0
   });
   const [loading, setLoading] = useState(true);
+  const [ogmoDialogOpen, setOgmoDialogOpen] = useState(false);
+  const [editingOgmo, setEditingOgmo] = useState(false);
+  const [ogmoFormData, setOgmoFormData] = useState({
+    nome: "",
+    cnpj: "",
+    endereco: "",
+    telefone: "",
+    email: "",
+    contato_emergencia: "",
+  });
 
   useEffect(() => {
     checkAuth();
@@ -114,6 +129,14 @@ const OgmoDashboard = () => {
       }
 
       setOgmo(data);
+      setOgmoFormData({
+        nome: data.nome,
+        cnpj: data.cnpj,
+        endereco: data.endereco || "",
+        telefone: data.telefone || "",
+        email: data.email || "",
+        contato_emergencia: data.contato_emergencia || "",
+      });
       // TODO: Fetch real stats from database when tables are created
     } catch (error: any) {
       toast({
@@ -131,6 +154,48 @@ const OgmoDashboard = () => {
     navigate("/login");
   };
 
+  const handleOpenOgmoDialog = () => {
+    setEditingOgmo(false);
+    setOgmoDialogOpen(true);
+  };
+
+  const handleEditOgmo = () => {
+    setEditingOgmo(true);
+  };
+
+  const handleSaveOgmo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { error } = await supabase
+        .from("ogmos")
+        .update({
+          nome: ogmoFormData.nome,
+          cnpj: ogmoFormData.cnpj,
+          endereco: ogmoFormData.endereco,
+          telefone: ogmoFormData.telefone,
+          email: ogmoFormData.email,
+          contato_emergencia: ogmoFormData.contato_emergencia,
+        })
+        .eq("id", ogmoId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sucesso",
+        description: "Dados do OGMO atualizados com sucesso",
+      });
+
+      setEditingOgmo(false);
+      fetchOgmoData();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar OGMO",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
@@ -145,14 +210,26 @@ const OgmoDashboard = () => {
         <Sidebar className="border-r">
           <div className="p-4 border-b">
             <img src={safoLogo} alt="Safo Logo" className="h-10 mb-2" />
-            <h2 className="font-bold text-lg truncate">{ogmo?.nome}</h2>
+            <h2 
+              className="font-bold text-lg truncate cursor-pointer hover:text-primary transition-colors"
+              onClick={handleOpenOgmoDialog}
+            >
+              {ogmo?.nome}
+            </h2>
             <p className="text-sm text-muted-foreground">{ogmo?.cnpj}</p>
           </div>
 
           <SidebarContent>
-            <SidebarGroup>
-              <SidebarGroupLabel>Cadastros</SidebarGroupLabel>
-              <SidebarGroupContent>
+            <Collapsible defaultOpen>
+              <SidebarGroup>
+                <CollapsibleTrigger asChild>
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between">
+                    Cadastros
+                    <ChevronDown className="h-4 w-4" />
+                  </SidebarGroupLabel>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}>
@@ -186,7 +263,9 @@ const OgmoDashboard = () => {
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
+                </CollapsibleContent>
             </SidebarGroup>
+            </Collapsible>
 
             <Collapsible defaultOpen>
               <SidebarGroup>
@@ -395,6 +474,118 @@ const OgmoDashboard = () => {
             </div>
           </main>
         </div>
+
+        <Dialog open={ogmoDialogOpen} onOpenChange={setOgmoDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Dados do OGMO</DialogTitle>
+              <DialogDescription>
+                {editingOgmo ? "Edite os dados do OGMO" : "Visualize os dados do OGMO"}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSaveOgmo} className="space-y-4">
+              <div>
+                <Label htmlFor="nome">Nome</Label>
+                <Input
+                  id="nome"
+                  value={ogmoFormData.nome}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, nome: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="cnpj">CNPJ</Label>
+                <Input
+                  id="cnpj"
+                  value={ogmoFormData.cnpj}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, cnpj: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="endereco">Endereço</Label>
+                <Input
+                  id="endereco"
+                  value={ogmoFormData.endereco}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, endereco: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                />
+              </div>
+              <div>
+                <Label htmlFor="telefone">Telefone</Label>
+                <Input
+                  id="telefone"
+                  value={ogmoFormData.telefone}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, telefone: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={ogmoFormData.email}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, email: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                />
+              </div>
+              <div>
+                <Label htmlFor="contato_emergencia">Contato de Emergência</Label>
+                <Input
+                  id="contato_emergencia"
+                  value={ogmoFormData.contato_emergencia}
+                  onChange={(e) =>
+                    setOgmoFormData({ ...ogmoFormData, contato_emergencia: e.target.value })
+                  }
+                  disabled={!editingOgmo}
+                  placeholder="Ex: (27) 99999-9999"
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                {!editingOgmo ? (
+                  <Button type="button" onClick={handleEditOgmo}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Editar
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setEditingOgmo(false);
+                        setOgmoFormData({
+                          nome: ogmo?.nome || "",
+                          cnpj: ogmo?.cnpj || "",
+                          endereco: ogmo?.endereco || "",
+                          telefone: ogmo?.telefone || "",
+                          email: ogmo?.email || "",
+                          contato_emergencia: ogmo?.contato_emergencia || "",
+                        });
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button type="submit">Salvar</Button>
+                  </>
+                )}
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </SidebarProvider>
   );

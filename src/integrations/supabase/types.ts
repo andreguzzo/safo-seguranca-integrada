@@ -173,6 +173,7 @@ export type Database = {
         Row: {
           bloqueado: boolean | null
           cnpj: string
+          contato_emergencia: string | null
           created_at: string
           email: string | null
           endereco: string | null
@@ -186,6 +187,7 @@ export type Database = {
         Insert: {
           bloqueado?: boolean | null
           cnpj: string
+          contato_emergencia?: string | null
           created_at?: string
           email?: string | null
           endereco?: string | null
@@ -199,6 +201,7 @@ export type Database = {
         Update: {
           bloqueado?: boolean | null
           cnpj?: string
+          contato_emergencia?: string | null
           created_at?: string
           email?: string | null
           endereco?: string | null
