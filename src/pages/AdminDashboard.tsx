@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, LogOut, Trash2, Pencil, DollarSign } from "lucide-react";
+import { Plus, LogOut, Trash2, Pencil, DollarSign, Building2 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 
 interface OGMO {
@@ -197,7 +197,7 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-6">
+        <div className="mb-6 flex flex-col md:flex-row gap-4">
           <Button 
             variant="default" 
             size="lg"
@@ -206,6 +206,15 @@ const AdminDashboard = () => {
           >
             <DollarSign className="h-5 w-5 mr-2" />
             Controle Financeiro
+          </Button>
+          <Button 
+            variant="default" 
+            size="lg"
+            onClick={() => navigate("/admin/terminais")}
+            className="w-full md:w-auto"
+          >
+            <Building2 className="h-5 w-5 mr-2" />
+            Terminais Portuários
           </Button>
         </div>
         

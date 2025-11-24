@@ -13,6 +13,7 @@ import DetalhesFinanceirosOgmo from "./pages/DetalhesFinanceirosOgmo";
 import OgmoDashboard from "./pages/OgmoDashboard";
 import FuncionariosOgmo from "./pages/FuncionariosOgmo";
 import FuncionariosSindicato from "./pages/FuncionariosSindicato";
+import TerminaisPortuarios from "./pages/TerminaisPortuarios";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />
           <Route path="/ogmo/:ogmoId/sindicatos" element={<FuncionariosSindicato />} />
+          <Route path="/admin/terminais" element={<TerminaisPortuarios />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
