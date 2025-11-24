@@ -36,7 +36,7 @@ export const Hero = () => {
             Sistema Integrado de Gestão da 
 Segurança do Trabalho Portuário
             <br />
-            <span className="text-green-900">Segurança do Trabalho Portuário</span>
+            <span className="text-green-900 text-4xl">Segurança do Trabalho Portuário</span>
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 text-stone-800">
             Conectando OGMO's, Operadores Portuários, Terminais e Trabalhadores em uma plataforma única para gestão eficiente e segura das operações portuárias.
