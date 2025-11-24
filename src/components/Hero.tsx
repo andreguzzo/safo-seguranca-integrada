@@ -5,35 +5,24 @@ import { useEffect, useState } from "react";
 import portBg1 from "@/assets/port-bg-1.jpg";
 import portBg2 from "@/assets/port-bg-2.jpg";
 import portBg3 from "@/assets/port-bg-3.jpg";
-
 const backgroundImages = [portBg1, portBg2, portBg3];
-
 export const Hero = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % backgroundImages.length);
+      setCurrentImageIndex(prev => (prev + 1) % backgroundImages.length);
     }, 5000); // Change image every 5 seconds
 
     return () => clearInterval(interval);
   }, []);
-
-  return (
-    <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+  return <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background Image Carousel */}
-      {backgroundImages.map((image, index) => (
-        <div
-          key={index}
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{
-            backgroundImage: `url(${image})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: currentImageIndex === index ? 1 : 0,
-          }}
-        />
-      ))}
+      {backgroundImages.map((image, index) => <div key={index} className="absolute inset-0 transition-opacity duration-1000" style={{
+      backgroundImage: `url(${image})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      opacity: currentImageIndex === index ? 1 : 0
+    }} />)}
       
       {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-background/70"></div>
@@ -46,9 +35,9 @@ export const Hero = () => {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-6">
             Sistema de Gestão de Segurança
             <br />
-            <span className="text-accent">do Trabalho Portuário Integrado</span>
+            <span className="text-blue-700">do Trabalho Portuário Integrado</span>
           </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
+          <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 text-blue-700">
             Conectando OGMO's, Operadores Portuários, Terminais e Trabalhadores em uma plataforma única para gestão eficiente e segura das operações portuárias.
           </p>
           
@@ -87,6 +76,5 @@ export const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
