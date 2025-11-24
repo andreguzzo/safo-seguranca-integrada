@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { DollarSign, FileUp, Settings, ArrowLeft } from "lucide-react";
+import { DollarSign, FileUp, Settings, ArrowLeft, BarChart3 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -199,6 +199,13 @@ export default function FinanceiroAdmin() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/admin/financeiro/dashboard")}
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Dashboard
+            </Button>
             <Dialog open={showConfig} onOpenChange={setShowConfig}>
               <DialogTrigger asChild>
                 <Button variant="outline">
