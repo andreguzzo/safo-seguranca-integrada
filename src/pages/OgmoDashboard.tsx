@@ -36,8 +36,7 @@ import {
   FileSearch,
   CalendarCheck,
   UserCog,
-  Scale,
-  Edit
+  Scale
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -85,7 +84,6 @@ const OgmoDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [ogmoDialogOpen, setOgmoDialogOpen] = useState(false);
-  const [editingOgmo, setEditingOgmo] = useState(false);
   const [ogmoFormData, setOgmoFormData] = useState({
     nome: "",
     cnpj: "",
@@ -155,12 +153,7 @@ const OgmoDashboard = () => {
   };
 
   const handleOpenOgmoDialog = () => {
-    setEditingOgmo(false);
     setOgmoDialogOpen(true);
-  };
-
-  const handleEditOgmo = () => {
-    setEditingOgmo(true);
   };
 
   const handleSaveOgmo = async (e: React.FormEvent) => {
@@ -169,11 +162,6 @@ const OgmoDashboard = () => {
       const { error } = await supabase
         .from("ogmos")
         .update({
-          nome: ogmoFormData.nome,
-          cnpj: ogmoFormData.cnpj,
-          endereco: ogmoFormData.endereco,
-          telefone: ogmoFormData.telefone,
-          email: ogmoFormData.email,
           contato_emergencia: ogmoFormData.contato_emergencia,
         })
         .eq("id", ogmoId);
@@ -182,14 +170,13 @@ const OgmoDashboard = () => {
 
       toast({
         title: "Sucesso",
-        description: "Dados do OGMO atualizados com sucesso",
+        description: "Contato de emergência atualizado com sucesso",
       });
 
-      setEditingOgmo(false);
       fetchOgmoData();
     } catch (error: any) {
       toast({
-        title: "Erro ao atualizar OGMO",
+        title: "Erro ao atualizar contato de emergência",
         description: error.message,
         variant: "destructive",
       });
@@ -480,7 +467,7 @@ const OgmoDashboard = () => {
             <DialogHeader>
               <DialogTitle>Dados do OGMO</DialogTitle>
               <DialogDescription>
-                {editingOgmo ? "Edite os dados do OGMO" : "Visualize os dados do OGMO"}
+                Visualize os dados do OGMO. Apenas o contato de emergência pode ser editado aqui.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSaveOgmo} className="space-y-4">
@@ -489,11 +476,8 @@ const OgmoDashboard = () => {
                 <Input
                   id="nome"
                   value={ogmoFormData.nome}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, nome: e.target.value })
-                  }
-                  disabled={!editingOgmo}
-                  required
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div>
@@ -501,11 +485,8 @@ const OgmoDashboard = () => {
                 <Input
                   id="cnpj"
                   value={ogmoFormData.cnpj}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, cnpj: e.target.value })
-                  }
-                  disabled={!editingOgmo}
-                  required
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div>
@@ -513,10 +494,8 @@ const OgmoDashboard = () => {
                 <Input
                   id="endereco"
                   value={ogmoFormData.endereco}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, endereco: e.target.value })
-                  }
-                  disabled={!editingOgmo}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div>
@@ -524,10 +503,8 @@ const OgmoDashboard = () => {
                 <Input
                   id="telefone"
                   value={ogmoFormData.telefone}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, telefone: e.target.value })
-                  }
-                  disabled={!editingOgmo}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div>
@@ -536,10 +513,8 @@ const OgmoDashboard = () => {
                   id="email"
                   type="email"
                   value={ogmoFormData.email}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, email: e.target.value })
-                  }
-                  disabled={!editingOgmo}
+                  disabled
+                  className="bg-muted"
                 />
               </div>
               <div>
@@ -550,38 +525,11 @@ const OgmoDashboard = () => {
                   onChange={(e) =>
                     setOgmoFormData({ ...ogmoFormData, contato_emergencia: e.target.value })
                   }
-                  disabled={!editingOgmo}
                   placeholder="Ex: (27) 99999-9999"
                 />
               </div>
               <div className="flex gap-2 justify-end">
-                {!editingOgmo ? (
-                  <Button type="button" onClick={handleEditOgmo}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setEditingOgmo(false);
-                        setOgmoFormData({
-                          nome: ogmo?.nome || "",
-                          cnpj: ogmo?.cnpj || "",
-                          endereco: ogmo?.endereco || "",
-                          telefone: ogmo?.telefone || "",
-                          email: ogmo?.email || "",
-                          contato_emergencia: ogmo?.contato_emergencia || "",
-                        });
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                    <Button type="submit">Salvar</Button>
-                  </>
-                )}
+                <Button type="submit">Salvar Contato de Emergência</Button>
               </div>
             </form>
           </DialogContent>
