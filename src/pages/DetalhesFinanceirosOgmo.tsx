@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil } from "lucide-react";
+import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -58,13 +58,24 @@ interface Mensalidade {
   cnpj_pagador: string | null;
 }
 
+interface Alerta {
+  id: string;
+  tipo: 'cadastro' | 'descadastramento';
+  nome_operador: string;
+  cpf_operador: string;
+  data_evento: string;
+  visualizado: boolean;
+}
+
 export default function DetalhesFinanceirosOgmo() {
   const { ogmoId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [ogmo, setOgmo] = useState<OgmoDetalhes | null>(null);
   const [mensalidades, setMensalidades] = useState<Mensalidade[]>([]);
+  const [alertas, setAlertas] = useState<Alerta[]>([]);
   const [quantidadeOperadores, setQuantidadeOperadores] = useState(0);
+  const [quantidadeOperadoresFaturaveis, setQuantidadeOperadoresFaturaveis] = useState(0);
   const [valorPorOperador, setValorPorOperador] = useState(0);
   const [valorPadraoGlobal, setValorPadraoGlobal] = useState(0);
   const [novoValor, setNovoValor] = useState(0);
@@ -116,13 +127,39 @@ export default function DetalhesFinanceirosOgmo() {
 
     setOgmo(ogmoData);
 
-    // Buscar quantidade de operadores
+    // Buscar quantidade total de operadores
     const { count } = await supabase
       .from("operadores_portuarios")
       .select("*", { count: "exact", head: true })
       .eq("ogmo_id", ogmoId);
 
     setQuantidadeOperadores(count || 0);
+
+    // Calcular operadores faturáveis (cadastrados antes do dia 1 do mês atual)
+    const firstDayOfMonth = new Date();
+    firstDayOfMonth.setDate(1);
+    firstDayOfMonth.setHours(0, 0, 0, 0);
+
+    const { data: operadoresFaturaveis } = await supabase.rpc(
+      'count_billable_operators',
+      {
+        _ogmo_id: ogmoId,
+        _reference_month: new Date().toISOString()
+      }
+    );
+
+    setQuantidadeOperadoresFaturaveis(operadoresFaturaveis || 0);
+
+    // Buscar alertas não visualizados
+    const { data: alertasData } = await supabase
+      .from("alertas_operadores")
+      .select("*")
+      .eq("ogmo_id", ogmoId)
+      .eq("visualizado", false)
+      .order("data_evento", { ascending: false })
+      .limit(10);
+
+    setAlertas((alertasData || []) as Alerta[]);
 
     // Buscar configuração global
     const { data: config } = await supabase
@@ -220,6 +257,22 @@ export default function DetalhesFinanceirosOgmo() {
     return <Badge variant="secondary">Pendente</Badge>;
   };
 
+  const handleMarcarAlertasVistos = async () => {
+    const alertaIds = alertas.map(a => a.id);
+    
+    const { error } = await supabase
+      .from("alertas_operadores")
+      .update({ visualizado: true })
+      .in("id", alertaIds);
+
+    if (!error) {
+      setAlertas([]);
+      toast({
+        title: "Alertas marcados como lidos",
+      });
+    }
+  };
+
   if (loading) {
     return <div className="min-h-screen bg-background p-8">Carregando...</div>;
   }
@@ -241,6 +294,53 @@ export default function DetalhesFinanceirosOgmo() {
         </Button>
 
         <div className="grid gap-6">
+          {alertas.length > 0 && (
+            <Card className="border-orange-500">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-5 w-5 text-orange-500" />
+                    <CardTitle>Alertas de Operadores</CardTitle>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleMarcarAlertasVistos}
+                  >
+                    Marcar como lidos
+                  </Button>
+                </div>
+                <CardDescription>
+                  Mudanças recentes no cadastro de operadores portuários
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {alertas.map((alerta) => (
+                    <div 
+                      key={alerta.id}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900"
+                    >
+                      <AlertCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={alerta.tipo === 'cadastro' ? 'default' : 'destructive'}>
+                            {alerta.tipo === 'cadastro' ? 'Cadastro' : 'Descadastramento'}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {new Date(alerta.data_evento).toLocaleString('pt-BR')}
+                          </span>
+                        </div>
+                        <p className="mt-1 font-medium">{alerta.nome_operador}</p>
+                        <p className="text-sm text-muted-foreground">CPF: {alerta.cpf_operador}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
               <div className="flex justify-between items-start">
@@ -360,8 +460,19 @@ export default function DetalhesFinanceirosOgmo() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Operadores cadastrados:</span>
+                      <span className="text-muted-foreground">Operadores cadastrados (total):</span>
                       <span className="font-bold">{quantidadeOperadores}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Operadores faturáveis:</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">{quantidadeOperadoresFaturaveis}</span>
+                        {quantidadeOperadores !== quantidadeOperadoresFaturaveis && (
+                          <Badge variant="secondary" className="text-xs">
+                            {quantidadeOperadores - quantidadeOperadoresFaturaveis} novos
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Valor por operador:</span>
@@ -373,11 +484,14 @@ export default function DetalhesFinanceirosOgmo() {
                       </div>
                     </div>
                     <div className="flex justify-between pt-2 border-t">
-                      <span className="font-semibold">Valor mensal total:</span>
+                      <span className="font-semibold">Valor mensal a faturar:</span>
                       <span className="font-bold text-primary text-xl">
-                        R$ {(quantidadeOperadores * valorPorOperador).toFixed(2)}
+                        R$ {(quantidadeOperadoresFaturaveis * valorPorOperador).toFixed(2)}
                       </span>
                     </div>
+                    <p className="text-xs text-muted-foreground pt-2 border-t">
+                      * Operadores cadastrados após o dia 01 do mês atual serão faturados apenas no próximo ciclo de cobrança (vencimento dia 05).
+                    </p>
                   </div>
                 </div>
               </div>
