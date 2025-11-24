@@ -127,6 +127,7 @@ export type Database = {
           telefone: string | null
           updated_at: string
           user_id: string | null
+          valor_por_operador: number | null
         }
         Insert: {
           bloqueado?: boolean | null
@@ -139,6 +140,7 @@ export type Database = {
           telefone?: string | null
           updated_at?: string
           user_id?: string | null
+          valor_por_operador?: number | null
         }
         Update: {
           bloqueado?: boolean | null
@@ -151,6 +153,7 @@ export type Database = {
           telefone?: string | null
           updated_at?: string
           user_id?: string | null
+          valor_por_operador?: number | null
         }
         Relationships: []
       }
