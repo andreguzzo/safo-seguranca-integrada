@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import FinanceiroAdmin from "./pages/FinanceiroAdmin";
 import DashboardFinanceiro from "./pages/DashboardFinanceiro";
+import RelatoriosFinanceiros from "./pages/RelatoriosFinanceiros";
 import DetalhesFinanceirosOgmo from "./pages/DetalhesFinanceirosOgmo";
 import OgmoDashboard from "./pages/OgmoDashboard";
 import FuncionariosOgmo from "./pages/FuncionariosOgmo";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/financeiro" element={<FinanceiroAdmin />} />
           <Route path="/admin/financeiro/dashboard" element={<DashboardFinanceiro />} />
+          <Route path="/admin/financeiro/relatorios" element={<RelatoriosFinanceiros />} />
           <Route path="/admin/financeiro/:ogmoId" element={<DetalhesFinanceirosOgmo />} />
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />

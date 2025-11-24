@@ -206,6 +206,13 @@ export default function FinanceiroAdmin() {
               <BarChart3 className="mr-2 h-4 w-4" />
               Dashboard
             </Button>
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/admin/financeiro/relatorios")}
+            >
+              <FileUp className="mr-2 h-4 w-4" />
+              Relatórios
+            </Button>
             <Dialog open={showConfig} onOpenChange={setShowConfig}>
               <DialogTrigger asChild>
                 <Button variant="outline">
