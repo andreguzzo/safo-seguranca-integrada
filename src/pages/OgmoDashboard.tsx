@@ -155,7 +155,7 @@ const OgmoDashboard = () => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}>
                       <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
                     </SidebarMenuButton>

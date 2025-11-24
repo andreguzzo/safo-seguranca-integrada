@@ -285,6 +285,7 @@ export type Database = {
           endereco: string | null
           id: string
           nome: string
+          ogmo_id: string | null
           telefone: string | null
           updated_at: string
           user_id: string | null
@@ -297,6 +298,7 @@ export type Database = {
           endereco?: string | null
           id?: string
           nome: string
+          ogmo_id?: string | null
           telefone?: string | null
           updated_at?: string
           user_id?: string | null
@@ -309,11 +311,20 @@ export type Database = {
           endereco?: string | null
           id?: string
           nome?: string
+          ogmo_id?: string | null
           telefone?: string | null
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "terminais_portuarios_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

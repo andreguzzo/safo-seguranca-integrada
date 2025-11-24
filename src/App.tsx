@@ -35,7 +35,7 @@ const App = () => (
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />
           <Route path="/ogmo/:ogmoId/sindicatos" element={<FuncionariosSindicato />} />
-          <Route path="/admin/terminais" element={<TerminaisPortuarios />} />
+          <Route path="/ogmo/:ogmoId/terminais" element={<TerminaisPortuarios />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
