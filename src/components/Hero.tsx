@@ -32,11 +32,11 @@ export const Hero = () => {
       
       <div className="container mx-auto max-w-6xl relative z-10">
         <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-6">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-gray-900">
             Sistema Integrado de Gestão da 
 Segurança do Trabalho Portuário
             <br />
-            <span className="text-blue-700">Segurança do Trabalho Portuário</span>
+            <span className="text-green-900">Segurança do Trabalho Portuário</span>
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 text-stone-800">
             Conectando OGMO's, Operadores Portuários, Terminais e Trabalhadores em uma plataforma única para gestão eficiente e segura das operações portuárias.
