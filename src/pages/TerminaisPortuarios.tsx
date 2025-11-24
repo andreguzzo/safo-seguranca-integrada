@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,10 +39,12 @@ interface Terminal {
   email: string | null;
   user_id: string | null;
   bloqueado: boolean;
+  ogmo_id: string | null;
   created_at: string;
 }
 
 export default function TerminaisPortuarios() {
+  const { ogmoId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [terminais, setTerminais] = useState<Terminal[]>([]);
@@ -67,6 +69,7 @@ export default function TerminaisPortuarios() {
       const { data, error } = await supabase
         .from("terminais_portuarios")
         .select("*")
+        .eq("ogmo_id", ogmoId)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -109,7 +112,8 @@ export default function TerminaisPortuarios() {
             telefone: formData.telefone,
             email: formData.email,
           })
-          .eq("id", editingTerminal.id);
+          .eq("id", editingTerminal.id)
+          .eq("ogmo_id", ogmoId);
 
         if (updateError) throw updateError;
 
@@ -136,6 +140,7 @@ export default function TerminaisPortuarios() {
             endereco: formData.endereco,
             telefone: formData.telefone,
             email: formData.email,
+            ogmo_id: ogmoId,
           })
           .select()
           .single();
@@ -193,7 +198,8 @@ export default function TerminaisPortuarios() {
       const { error } = await supabase
         .from("terminais_portuarios")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("ogmo_id", ogmoId);
 
       if (error) throw error;
 
