@@ -188,10 +188,6 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => navigate("/admin/financeiro")}>
-              <DollarSign className="h-4 w-4 mr-2" />
-              Controle Financeiro
-            </Button>
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Sair
@@ -201,6 +197,18 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Button 
+            variant="default" 
+            size="lg"
+            onClick={() => navigate("/admin/financeiro")}
+            className="w-full md:w-auto"
+          >
+            <DollarSign className="h-5 w-5 mr-2" />
+            Controle Financeiro
+          </Button>
+        </div>
+        
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
