@@ -8,7 +8,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center hover:opacity-90 transition-smooth">
-            <img src={safoLogo} alt="Safo Logo" className="h-12" />
+            <img src={safoLogo} alt="Safo Logo" className="h-16 sm:h-20" />
           </Link>
           
           <div className="flex items-center gap-4">
