@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { NotificationBell } from "@/components/NotificationBell";
+import { useNotifications } from "@/hooks/useNotifications";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -92,6 +95,9 @@ const OgmoDashboard = () => {
     email: "",
     contato_emergencia: "",
   });
+
+  // Hook de notificações
+  const { countsByType, markTypeAsRead, markOperatorAlertsAsRead } = useNotifications(ogmoId);
 
   useEffect(() => {
     checkAuth();
@@ -375,20 +381,34 @@ const OgmoDashboard = () => {
                   <p className="text-sm text-muted-foreground mt-1">Visão geral dos documentos e estatísticas</p>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sair
-              </Button>
+              <div className="flex items-center gap-3">
+                <NotificationBell ogmoId={ogmoId} />
+                <Button 
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
+              </div>
             </div>
           </header>
 
           <main className="flex-1 container mx-auto px-6 py-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("novo_acidente")}
+              >
+                {countsByType.acidentes > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.acidentes}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Acidentes de Trabalho</CardTitle>
                   <div className="p-2 rounded-lg bg-destructive/10">
@@ -401,7 +421,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("novo_incidente")}
+              >
+                {countsByType.incidentes > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.incidentes}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Incidentes</CardTitle>
                   <div className="p-2 rounded-lg bg-orange-500/10">
@@ -414,7 +445,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("nova_rnc")}
+              >
+                {countsByType.rnc > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.rnc}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">RNC</CardTitle>
                   <div className="p-2 rounded-lg bg-yellow-500/10">
@@ -427,7 +469,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("novo_top")}
+              >
+                {countsByType.top > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.top}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">TOP</CardTitle>
                   <div className="p-2 rounded-lg bg-primary/10">
@@ -440,7 +493,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("nova_rds")}
+              >
+                {countsByType.rds > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.rds}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">RDS</CardTitle>
                   <div className="p-2 rounded-lg bg-green-500/10">
@@ -453,7 +517,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("novo_checklist")}
+              >
+                {countsByType.checklists > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.checklists}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Checklists</CardTitle>
                   <div className="p-2 rounded-lg bg-blue-500/10">
@@ -466,7 +541,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("nova_pt")}
+              >
+                {countsByType.pt > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.pt}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">PT</CardTitle>
                   <div className="p-2 rounded-lg bg-purple-500/10">
@@ -479,7 +565,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("nova_investigacao")}
+              >
+                {countsByType.investigacoes > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.investigacoes}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Investigação de Acidentes</CardTitle>
                   <div className="p-2 rounded-lg bg-indigo-500/10">
@@ -492,7 +589,18 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card 
+                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
+                onClick={() => markTypeAsRead("nova_reuniao")}
+              >
+                {countsByType.reunioes > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
+                  >
+                    {countsByType.reunioes}
+                  </Badge>
+                )}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Reuniões</CardTitle>
                   <div className="p-2 rounded-lg bg-teal-500/10">
