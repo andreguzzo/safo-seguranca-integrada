@@ -33,7 +33,7 @@ export const Hero = () => {
       <div className="container mx-auto max-w-6xl relative z-10">
         <div className="text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-6">
-            Sistema Integrado de Gestão da
+            Sistema Integrado de Gestão da 
 Segurança do Trabalho Portuário
             <br />
             <span className="text-blue-700">Segurança do Trabalho Portuário</span>
