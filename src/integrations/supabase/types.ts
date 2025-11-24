@@ -121,6 +121,7 @@ export type Database = {
           data_vencimento: string
           id: string
           mes_referencia: string
+          nf_emitida: boolean
           observacoes: string | null
           ogmo_id: string
           quantidade_operadores: number
@@ -135,6 +136,7 @@ export type Database = {
           data_vencimento: string
           id?: string
           mes_referencia: string
+          nf_emitida?: boolean
           observacoes?: string | null
           ogmo_id: string
           quantidade_operadores?: number
@@ -149,6 +151,7 @@ export type Database = {
           data_vencimento?: string
           id?: string
           mes_referencia?: string
+          nf_emitida?: boolean
           observacoes?: string | null
           ogmo_id?: string
           quantidade_operadores?: number
