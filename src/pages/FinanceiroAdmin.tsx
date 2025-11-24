@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { DollarSign, FileUp, Settings } from "lucide-react";
+import { DollarSign, FileUp, Settings, ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -183,6 +183,14 @@ export default function FinanceiroAdmin() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/admin")}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Voltar ao Painel Administrativo
+        </Button>
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-foreground">Controle Financeiro</h1>
