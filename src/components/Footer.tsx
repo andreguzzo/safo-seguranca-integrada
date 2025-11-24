@@ -1,14 +1,12 @@
 import { Link } from "react-router-dom";
 import safoLogo from "@/assets/safo-logo.png";
-
 export const Footer = () => {
-  return (
-    <footer className="bg-primary text-primary-foreground py-12 px-4 sm:px-6 lg:px-8">
+  return <footer className="bg-primary text-primary-foreground py-12 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-6xl">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="mb-4">
-              <img src={safoLogo} alt="Safo Logo" className="h-16" />
+              <img alt="Safo Logo" className="h-16" src="/lovable-uploads/2a389ffd-6e61-4350-b59a-2109d92dbee5.png" />
             </div>
             <p className="text-sm opacity-90">
               Sistema de Gestão de Segurança do Trabalho Portuário Integrado
@@ -47,6 +45,5 @@ export const Footer = () => {
           <p>&copy; {new Date().getFullYear()} SAFO. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
