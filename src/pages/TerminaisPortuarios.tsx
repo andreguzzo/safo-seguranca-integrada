@@ -219,10 +219,12 @@ export default function TerminaisPortuarios() {
     }
   };
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setEditingTerminal(null);
-    setFormData({ nome: "", cnpj: "", endereco: "", telefone: "", email: "", senha: "" });
+  const handleDialogChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      setEditingTerminal(null);
+      setFormData({ nome: "", cnpj: "", endereco: "", telefone: "", email: "", senha: "" });
+    }
   };
 
   return (
@@ -253,7 +255,7 @@ export default function TerminaisPortuarios() {
                   Terminais portuários cadastrados no sistema
                 </CardDescription>
               </div>
-              <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
+              <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
                 <DialogTrigger asChild>
                   <Button>
                     <Building2 className="h-4 w-4 mr-2" />
