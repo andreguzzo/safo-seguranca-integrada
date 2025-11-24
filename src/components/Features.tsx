@@ -6,7 +6,7 @@ export const Features = () => {
     {
       icon: Anchor,
       title: "OGMO's",
-      description: "Gestão completa de órgãos gestores de mão de obra, com controle de escalas e registros."
+      description: "Gestão completa da Segurança do Trabalho na competência dos  Órgãos Gestores de Mão de Obra"
     },
     {
       icon: Building2,
