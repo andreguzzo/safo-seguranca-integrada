@@ -37,7 +37,7 @@ export const Hero = () => {
             <br />
             <span className="text-blue-700">do Trabalho Portuário Integrado</span>
           </h1>
-          <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 text-blue-700">
+          <p className="text-lg sm:text-xl max-w-3xl mx-auto mb-10 text-stone-800">
             Conectando OGMO's, Operadores Portuários, Terminais e Trabalhadores em uma plataforma única para gestão eficiente e segura das operações portuárias.
           </p>
           
