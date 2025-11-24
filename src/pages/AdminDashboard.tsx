@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, LogOut, Trash2, Pencil, DollarSign } from "lucide-react";
+import { Plus, LogOut, Trash2, Pencil, DollarSign, Users } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 
 interface OGMO {
@@ -312,16 +312,52 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-6 py-10">
-        <div className="mb-8">
-          <Button 
-            variant="default" 
-            size="lg"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Card Controle Financeiro */}
+          <Card 
+            className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
             onClick={() => navigate("/admin/financeiro")}
-            className="w-full md:w-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            <DollarSign className="h-5 w-5 mr-2" />
-            Controle Financeiro
-          </Button>
+            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent">
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-lg bg-primary/20">
+                  <DollarSign className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold">Controle Financeiro</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Gerencie cobranças e pagamentos dos OGMOs
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground">
+                Acesse o módulo financeiro para visualizar mensalidades, gerar cobranças e acompanhar pagamentos.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Card OGMO's Cadastrados - Resumo */}
+          <Card className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/30 to-transparent">
+              <CardTitle className="text-2xl font-bold">OGMO's no Sistema</CardTitle>
+              <CardDescription className="text-base mt-2">
+                Visão geral dos órgãos cadastrados
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-5xl font-bold text-primary">{ogmos.length}</p>
+                  <p className="text-muted-foreground mt-2">OGMO's cadastrados</p>
+                </div>
+                <div className="p-4 rounded-lg bg-primary/10">
+                  <Users className="h-12 w-12 text-primary" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
         
         <Card className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm">
