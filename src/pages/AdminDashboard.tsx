@@ -18,18 +18,32 @@ interface OGMO {
   endereco: string | null;
   telefone: string | null;
   email: string | null;
+  user_id: string | null;
+  contato_emergencia: string | null;
 }
 
 const AdminDashboard = () => {
   const [ogmos, setOgmos] = useState<OGMO[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingOgmo, setEditingOgmo] = useState<OGMO | null>(null);
   const [formData, setFormData] = useState({
     nome: "",
     cnpj: "",
     endereco: "",
     telefone: "",
     email: "",
+    email_master: "",
+    senha_master: "",
+  });
+  const [editFormData, setEditFormData] = useState({
+    nome: "",
+    cnpj: "",
+    endereco: "",
+    telefone: "",
+    email: "",
+    contato_emergencia: "",
     email_master: "",
     senha_master: "",
   });
@@ -165,6 +179,107 @@ const AdminDashboard = () => {
     } catch (error: any) {
       toast({
         title: "Erro ao excluir OGMO",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEdit = async (ogmo: OGMO) => {
+    setEditingOgmo(ogmo);
+    
+    // Get master user email
+    if (ogmo.user_id) {
+      const { data: { user } } = await supabase.auth.admin.getUserById(ogmo.user_id);
+      
+      setEditFormData({
+        nome: ogmo.nome,
+        cnpj: ogmo.cnpj,
+        endereco: ogmo.endereco || "",
+        telefone: ogmo.telefone || "",
+        email: ogmo.email || "",
+        contato_emergencia: ogmo.contato_emergencia || "",
+        email_master: user?.email || "",
+        senha_master: "",
+      });
+    } else {
+      setEditFormData({
+        nome: ogmo.nome,
+        cnpj: ogmo.cnpj,
+        endereco: ogmo.endereco || "",
+        telefone: ogmo.telefone || "",
+        email: ogmo.email || "",
+        contato_emergencia: ogmo.contato_emergencia || "",
+        email_master: "",
+        senha_master: "",
+      });
+    }
+    
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateOgmo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingOgmo) return;
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Sessão não encontrada");
+      }
+
+      // Update OGMO data
+      const { error: ogmoError } = await supabase
+        .from("ogmos")
+        .update({
+          nome: editFormData.nome,
+          cnpj: editFormData.cnpj,
+          endereco: editFormData.endereco,
+          telefone: editFormData.telefone,
+          email: editFormData.email,
+          contato_emergencia: editFormData.contato_emergencia,
+        })
+        .eq("id", editingOgmo.id);
+
+      if (ogmoError) throw ogmoError;
+
+      // Update master user if needed
+      if (editingOgmo.user_id && (editFormData.email_master || editFormData.senha_master)) {
+        const response = await fetch(
+          `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/update-ogmo-user`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              user_id: editingOgmo.user_id,
+              email: editFormData.email_master,
+              password: editFormData.senha_master || undefined,
+            }),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Erro ao atualizar usuário master");
+        }
+      }
+
+      toast({
+        title: "OGMO atualizado com sucesso!",
+      });
+
+      setIsEditDialogOpen(false);
+      setEditingOgmo(null);
+      fetchOgmos();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar OGMO",
         description: error.message,
         variant: "destructive",
       });
@@ -342,16 +457,28 @@ const AdminDashboard = () => {
                       <TableCell>{ogmo.telefone || "-"}</TableCell>
                       <TableCell>{ogmo.email || "-"}</TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(ogmo.id);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(ogmo);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(ogmo.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -360,6 +487,106 @@ const AdminDashboard = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Editar OGMO</DialogTitle>
+              <DialogDescription>
+                Edite os dados do OGMO e do usuário master
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleUpdateOgmo} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit_nome">Nome do OGMO *</Label>
+                <Input
+                  id="edit_nome"
+                  value={editFormData.nome}
+                  onChange={(e) => setEditFormData({ ...editFormData, nome: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_cnpj">CNPJ *</Label>
+                <Input
+                  id="edit_cnpj"
+                  value={editFormData.cnpj}
+                  onChange={(e) => setEditFormData({ ...editFormData, cnpj: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_endereco">Endereço</Label>
+                <Input
+                  id="edit_endereco"
+                  value={editFormData.endereco}
+                  onChange={(e) => setEditFormData({ ...editFormData, endereco: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_telefone">Telefone</Label>
+                <Input
+                  id="edit_telefone"
+                  value={editFormData.telefone}
+                  onChange={(e) => setEditFormData({ ...editFormData, telefone: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_email">Email do OGMO</Label>
+                <Input
+                  id="edit_email"
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_contato_emergencia">Contato de Emergência</Label>
+                <Input
+                  id="edit_contato_emergencia"
+                  value={editFormData.contato_emergencia}
+                  onChange={(e) => setEditFormData({ ...editFormData, contato_emergencia: e.target.value })}
+                />
+              </div>
+
+              <div className="border-t pt-4 mt-4">
+                <h3 className="text-lg font-semibold mb-4">Usuário Master OGMO</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="edit_email_master">Email *</Label>
+                  <Input
+                    id="edit_email_master"
+                    type="email"
+                    value={editFormData.email_master}
+                    onChange={(e) => setEditFormData({ ...editFormData, email_master: e.target.value })}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2 mt-4">
+                  <Label htmlFor="edit_senha_master">Nova Senha (deixe em branco para manter a atual)</Label>
+                  <Input
+                    id="edit_senha_master"
+                    type="password"
+                    value={editFormData.senha_master}
+                    onChange={(e) => setEditFormData({ ...editFormData, senha_master: e.target.value })}
+                    minLength={6}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Salvar Alterações
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
