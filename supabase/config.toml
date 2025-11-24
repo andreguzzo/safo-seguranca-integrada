@@ -2,3 +2,6 @@ project_id = "kazjpebvshepisrbahqu"
 
 [functions.gerar-mensalidades-mensais]
 verify_jwt = false
+
+[functions.processar-extrato-bancario]
+verify_jwt = true
