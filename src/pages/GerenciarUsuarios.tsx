@@ -81,16 +81,25 @@ const GerenciarUsuarios = () => {
         throw new Error("Sessão não encontrada");
       }
 
-      const response = await supabase.functions.invoke('manage-admin-users?action=list', {
-        body: {},
-        method: 'GET',
-      });
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/manage-admin-users?action=list`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthempwZWJ2c2hlcGlzcmJhaHF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjcwNTUsImV4cCI6MjA3NjY0MzA1NX0.lCOWS13qLKNH_pR-PCBs7YnohEXFUpR7yIbUQHwJZto',
+          }
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao carregar usuários');
       }
 
-      const { users: adminUsers } = response.data;
+      const result = await response.json();
+
+      const { users: adminUsers } = result;
       setUsers(adminUsers || []);
     } catch (error: any) {
       toast({
@@ -113,17 +122,26 @@ const GerenciarUsuarios = () => {
         throw new Error("Sessão não encontrada");
       }
 
-      const response = await supabase.functions.invoke('manage-admin-users?action=create', {
-        body: {
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-        },
-        method: 'POST',
-      });
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/manage-admin-users?action=create`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthempwZWJ2c2hlcGlzcmJhaHF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjcwNTUsImV4cCI6MjA3NjY0MzA1NX0.lCOWS13qLKNH_pR-PCBs7YnohEXFUpR7yIbUQHwJZto',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+          })
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao criar usuário');
       }
 
       toast({
@@ -165,16 +183,25 @@ const GerenciarUsuarios = () => {
         throw new Error("Sessão não encontrada");
       }
 
-      const response = await supabase.functions.invoke('manage-admin-users?action=delete', {
-        body: {
-          user_id: userId,
-          user_role: userRole,
-        },
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/manage-admin-users?action=delete`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthempwZWJ2c2hlcGlzcmJhaHF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjcwNTUsImV4cCI6MjA3NjY0MzA1NX0.lCOWS13qLKNH_pR-PCBs7YnohEXFUpR7yIbUQHwJZto',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            user_role: userRole,
+          })
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao excluir usuário');
       }
 
       toast({
@@ -213,18 +240,27 @@ const GerenciarUsuarios = () => {
         throw new Error("Sessão não encontrada");
       }
 
-      const response = await supabase.functions.invoke('manage-admin-users?action=update', {
-        body: {
-          user_id: editingUser.id,
-          email: editFormData.email !== editingUser.email ? editFormData.email : undefined,
-          password: editFormData.password || undefined,
-          role: editFormData.role !== editingUser.role ? editFormData.role : undefined,
-        },
-        method: 'PUT',
-      });
+      const response = await fetch(
+        `https://kazjpebvshepisrbahqu.supabase.co/functions/v1/manage-admin-users?action=update`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthempwZWJ2c2hlcGlzcmJhaHF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwNjcwNTUsImV4cCI6MjA3NjY0MzA1NX0.lCOWS13qLKNH_pR-PCBs7YnohEXFUpR7yIbUQHwJZto',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: editingUser.id,
+            email: editFormData.email !== editingUser.email ? editFormData.email : undefined,
+            password: editFormData.password || undefined,
+            role: editFormData.role !== editingUser.role ? editFormData.role : undefined,
+          })
+        }
+      );
 
-      if (response.error) {
-        throw response.error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao atualizar usuário');
       }
 
       toast({
