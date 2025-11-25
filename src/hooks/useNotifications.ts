@@ -50,14 +50,18 @@ export const useNotifications = (ogmoId: string | undefined) => {
   }, [ogmoId]);
 
   const fetchNotifications = async () => {
-    if (!ogmoId) return;
-
-    const { data, error } = await supabase
+    let query = supabase
       .from("alertas_operadores")
       .select("*")
-      .eq("ogmo_id", ogmoId)
       .eq("lida", false)
       .order("data_evento", { ascending: false });
+
+    // Se ogmoId for fornecido, filtra por ele, senão busca todos
+    if (ogmoId) {
+      query = query.eq("ogmo_id", ogmoId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Erro ao carregar notificações:", error);
@@ -115,13 +119,16 @@ export const useNotifications = (ogmoId: string | undefined) => {
   };
 
   const markAllAsRead = async () => {
-    if (!ogmoId) return;
-
-    const { error } = await supabase
+    let query = supabase
       .from("alertas_operadores")
       .update({ lida: true, visualizado: true })
-      .eq("ogmo_id", ogmoId)
       .eq("lida", false);
+
+    if (ogmoId) {
+      query = query.eq("ogmo_id", ogmoId);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error("Erro ao marcar todas como lidas:", error);
@@ -132,14 +139,17 @@ export const useNotifications = (ogmoId: string | undefined) => {
   };
 
   const markTypeAsRead = async (tipoDocumento: string) => {
-    if (!ogmoId) return;
-
-    const { error } = await supabase
+    let query = supabase
       .from("alertas_operadores")
       .update({ lida: true, visualizado: true })
-      .eq("ogmo_id", ogmoId)
       .eq("tipo_documento", tipoDocumento)
       .eq("lida", false);
+
+    if (ogmoId) {
+      query = query.eq("ogmo_id", ogmoId);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error("Erro ao marcar tipo como lido:", error);
@@ -150,14 +160,17 @@ export const useNotifications = (ogmoId: string | undefined) => {
   };
 
   const markOperatorAlertsAsRead = async () => {
-    if (!ogmoId) return;
-
-    const { error } = await supabase
+    let query = supabase
       .from("alertas_operadores")
       .update({ lida: true, visualizado: true })
-      .eq("ogmo_id", ogmoId)
       .in("tipo", ["cadastro", "descadastramento"])
       .eq("lida", false);
+
+    if (ogmoId) {
+      query = query.eq("ogmo_id", ogmoId);
+    }
+
+    const { error } = await query;
 
     if (error) {
       console.error("Erro ao marcar alertas de operadores como lidos:", error);
