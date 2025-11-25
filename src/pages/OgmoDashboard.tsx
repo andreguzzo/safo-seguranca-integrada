@@ -39,7 +39,8 @@ import {
   FileSearch,
   CalendarCheck,
   UserCog,
-  Scale
+  Scale,
+  User
 } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -87,6 +88,7 @@ const OgmoDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [ogmoDialogOpen, setOgmoDialogOpen] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [ogmoFormData, setOgmoFormData] = useState({
     nome: "",
     cnpj: "",
@@ -94,6 +96,11 @@ const OgmoDashboard = () => {
     telefone: "",
     email: "",
     contato_emergencia: "",
+  });
+  const [passwordFormData, setPasswordFormData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   // Hook de notificações
@@ -180,9 +187,80 @@ const OgmoDashboard = () => {
       });
 
       fetchOgmoData();
+      setOgmoDialogOpen(false);
     } catch (error: any) {
       toast({
         title: "Erro ao atualizar contato de emergência",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (passwordFormData.newPassword !== passwordFormData.confirmPassword) {
+      toast({
+        title: "Erro",
+        description: "A nova senha e a confirmação não coincidem",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (passwordFormData.newPassword.length < 6) {
+      toast({
+        title: "Erro",
+        description: "A nova senha deve ter pelo menos 6 caracteres",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Primeiro verifica a senha atual
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.email) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      // Tenta fazer login com a senha atual para validar
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: passwordFormData.currentPassword,
+      });
+
+      if (signInError) {
+        toast({
+          title: "Erro",
+          description: "Senha atual incorreta",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Atualiza a senha
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: passwordFormData.newPassword,
+      });
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Sucesso",
+        description: "Senha alterada com sucesso",
+      });
+
+      setPasswordDialogOpen(false);
+      setPasswordFormData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao alterar senha",
         description: error.message,
         variant: "destructive",
       });
@@ -383,6 +461,15 @@ const OgmoDashboard = () => {
               </div>
               <div className="flex items-center gap-3">
                 <NotificationBell ogmoId={ogmoId} />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setPasswordDialogOpen(true)}
+                  className="hover:bg-primary/10 hover:text-primary hover:border-primary transition-colors"
+                  title="Editar perfil"
+                >
+                  <User className="h-4 w-4" />
+                </Button>
                 <Button 
                   variant="outline" 
                   onClick={handleLogout}
@@ -696,6 +783,78 @@ const OgmoDashboard = () => {
                   className="shadow-md hover:shadow-lg transition-all"
                 >
                   Salvar Contato de Emergência
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog para troca de senha */}
+        <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Alterar Senha</DialogTitle>
+              <DialogDescription>
+                Digite sua senha atual e a nova senha que deseja usar
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="currentPassword">Senha Atual</Label>
+                <Input
+                  id="currentPassword"
+                  type="password"
+                  value={passwordFormData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordFormData({ ...passwordFormData, currentPassword: e.target.value })
+                  }
+                  placeholder="Digite sua senha atual"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">Nova Senha</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={passwordFormData.newPassword}
+                  onChange={(e) =>
+                    setPasswordFormData({ ...passwordFormData, newPassword: e.target.value })
+                  }
+                  placeholder="Digite a nova senha (mín. 6 caracteres)"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={passwordFormData.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordFormData({ ...passwordFormData, confirmPassword: e.target.value })
+                  }
+                  placeholder="Digite a nova senha novamente"
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setPasswordDialogOpen(false);
+                    setPasswordFormData({
+                      currentPassword: "",
+                      newPassword: "",
+                      confirmPassword: "",
+                    });
+                  }}
+                >
+                  Cancelar
+                </Button>
+                <Button type="submit">
+                  Alterar Senha
                 </Button>
               </div>
             </form>
