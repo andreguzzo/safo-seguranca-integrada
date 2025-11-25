@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ArrowLeft, Trash2, Shield, User } from "lucide-react";
+import { Plus, ArrowLeft, Trash2, Shield, User, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import safoLogo from "@/assets/safo-logo.png";
 
@@ -24,8 +24,15 @@ const GerenciarUsuarios = () => {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null);
   const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    role: "usuario" as "admin" | "usuario",
+  });
+  const [editFormData, setEditFormData] = useState({
     email: "",
     password: "",
     role: "usuario" as "admin" | "usuario",
@@ -68,41 +75,23 @@ const GerenciarUsuarios = () => {
 
   const fetchUsers = async () => {
     try {
-      type RoleData = { user_id: string; role: string };
+      const { data: { session } } = await supabase.auth.getSession();
       
-      const { data: rolesData, error: rolesError } = await supabase
-        .from("user_roles")
-        .select("user_id, role")
-        .in("role", ["admin", "usuario"]) as { data: RoleData[] | null; error: any };
-
-      if (rolesError) throw rolesError;
-
-      const userIds = rolesData?.map(r => r.user_id) || [];
-      
-      if (userIds.length === 0) {
-        setUsers([]);
-        setLoading(false);
-        return;
+      if (!session) {
+        throw new Error("Sessão não encontrada");
       }
 
-      const { data: { users: authUsers }, error: usersError } = await supabase.auth.admin.listUsers();
+      const response = await supabase.functions.invoke('manage-admin-users?action=list', {
+        body: {},
+        method: 'GET',
+      });
 
-      if (usersError) throw usersError;
-      if (!authUsers) throw new Error("Erro ao listar usuários");
+      if (response.error) {
+        throw response.error;
+      }
 
-      const adminUsers: AdminUser[] = authUsers
-        .filter((user: any) => userIds.includes(user.id))
-        .map((user: any) => {
-          const roleData = rolesData?.find(r => r.user_id === user.id);
-          return {
-            id: user.id,
-            email: user.email || "",
-            created_at: user.created_at,
-            role: roleData?.role as "admin" | "usuario",
-          };
-        });
-
-      setUsers(adminUsers);
+      const { users: adminUsers } = response.data;
+      setUsers(adminUsers || []);
     } catch (error: any) {
       toast({
         title: "Erro ao carregar usuários",
@@ -118,23 +107,24 @@ const GerenciarUsuarios = () => {
     e.preventDefault();
     
     try {
-      const { data: { user: newUser }, error: signUpError } = await supabase.auth.admin.createUser({
-        email: formData.email,
-        password: formData.password,
-        email_confirm: true,
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Sessão não encontrada");
+      }
+
+      const response = await supabase.functions.invoke('manage-admin-users?action=create', {
+        body: {
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+        },
+        method: 'POST',
       });
 
-      if (signUpError) throw signUpError;
-      if (!newUser) throw new Error("Erro ao criar usuário");
-
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({
-          user_id: newUser.id,
-          role: formData.role,
-        });
-
-      if (roleError) throw roleError;
+      if (response.error) {
+        throw response.error;
+      }
 
       toast({
         title: "Usuário criado com sucesso!",
@@ -169,16 +159,23 @@ const GerenciarUsuarios = () => {
     if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
 
     try {
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .delete()
-        .eq("user_id", userId);
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Sessão não encontrada");
+      }
 
-      if (roleError) throw roleError;
+      const response = await supabase.functions.invoke('manage-admin-users?action=delete', {
+        body: {
+          user_id: userId,
+          user_role: userRole,
+        },
+        method: 'DELETE',
+      });
 
-      const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
-
-      if (deleteError) throw deleteError;
+      if (response.error) {
+        throw response.error;
+      }
 
       toast({
         title: "Usuário excluído com sucesso!",
@@ -188,6 +185,58 @@ const GerenciarUsuarios = () => {
     } catch (error: any) {
       toast({
         title: "Erro ao excluir usuário",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEdit = (user: AdminUser) => {
+    setEditingUser(user);
+    setEditFormData({
+      email: user.email,
+      password: "",
+      role: user.role,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingUser) return;
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error("Sessão não encontrada");
+      }
+
+      const response = await supabase.functions.invoke('manage-admin-users?action=update', {
+        body: {
+          user_id: editingUser.id,
+          email: editFormData.email !== editingUser.email ? editFormData.email : undefined,
+          password: editFormData.password || undefined,
+          role: editFormData.role !== editingUser.role ? editFormData.role : undefined,
+        },
+        method: 'PUT',
+      });
+
+      if (response.error) {
+        throw response.error;
+      }
+
+      toast({
+        title: "Usuário atualizado com sucesso!",
+      });
+
+      setIsEditDialogOpen(false);
+      setEditingUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar usuário",
         description: error.message,
         variant: "destructive",
       });
@@ -335,15 +384,27 @@ const GerenciarUsuarios = () => {
                           {new Date(user.created_at).toLocaleDateString("pt-BR")}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(user.id, user.role)}
-                            className="hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                            disabled={user.role === "admin" && currentUserRole !== "admin"}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(user)}
+                              className="hover:bg-muted transition-colors"
+                              title="Editar usuário"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(user.id, user.role)}
+                              className="hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                              disabled={user.role === "admin" && currentUserRole !== "admin"}
+                              title="Excluir usuário"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -353,6 +414,59 @@ const GerenciarUsuarios = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Dialog de Edição */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="bg-background/95 backdrop-blur-sm">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Editar Usuário</DialogTitle>
+              <DialogDescription className="text-base">
+                Modifique os dados do usuário administrativo
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleUpdateUser} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="edit_email">Email *</Label>
+                <Input
+                  id="edit_email"
+                  type="email"
+                  value={editFormData.email}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_password">Nova Senha (deixe em branco para não alterar)</Label>
+                <Input
+                  id="edit_password"
+                  type="password"
+                  value={editFormData.password}
+                  onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit_role">Nível de Acesso *</Label>
+                <Select
+                  value={editFormData.role}
+                  onValueChange={(value: "admin" | "usuario") => setEditFormData({ ...editFormData, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Administrador</SelectItem>
+                    <SelectItem value="usuario">Usuário</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button type="submit" className="w-full shadow-md hover:shadow-lg transition-all">
+                Atualizar Usuário
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
