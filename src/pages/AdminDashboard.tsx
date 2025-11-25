@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, LogOut, Trash2, Pencil, DollarSign, Users } from "lucide-react";
+import { Plus, LogOut, Trash2, Pencil, DollarSign, Users, UserCog } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
+import { NotificationBell } from "@/components/NotificationBell";
 
 interface OGMO {
   id: string;
@@ -304,10 +305,22 @@ const AdminDashboard = () => {
               <p className="text-sm text-muted-foreground mt-1">Gestão de Órgãos Gestores de Mão de Obra</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLogout} className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors">
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-3">
+            <NotificationBell ogmoId={undefined} />
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={() => navigate("/admin/usuarios")}
+              className="hover:bg-muted transition-colors"
+              title="Gerenciar Usuários"
+            >
+              <UserCog className="h-5 w-5" />
+            </Button>
+            <Button variant="outline" onClick={handleLogout} className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
