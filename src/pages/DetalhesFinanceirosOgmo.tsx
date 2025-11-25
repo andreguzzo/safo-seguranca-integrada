@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Lock, Unlock, Phone, Mail, MapPin, Pencil, AlertCircle, Bell, CheckCircle, FileText, MoreVertical, Upload } from "lucide-react";
+import safoLogo from "@/assets/safo-logo.png";
 import {
   Table,
   TableBody,
@@ -401,18 +402,30 @@ export default function DetalhesFinanceirosOgmo() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/admin/financeiro")}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
-        </Button>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg shadow-sm">
+        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+              <img src={safoLogo} alt="Safo Logo" className="h-20 relative z-10 drop-shadow-2xl" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Detalhes Financeiros - {ogmo.nome}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Gestão de mensalidades e histórico de pagamentos</p>
+            </div>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/admin/financeiro")}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
+        </div>
+      </header>
 
-        <div className="grid gap-6">
+      <main className="container mx-auto px-6 py-10">
+        <div className="max-w-7xl mx-auto">
           {alertas.length > 0 && (
             <Card className="border-orange-500">
               <CardHeader>
@@ -767,8 +780,8 @@ export default function DetalhesFinanceirosOgmo() {
               )}
             </CardContent>
           </Card>
-        </div>
+          </div>
+        </main>
       </div>
-    </div>
-  );
-}
+    );
+  }

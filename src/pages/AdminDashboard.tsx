@@ -295,9 +295,12 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg shadow-sm">
-        <div className="container mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <img src={safoLogo} alt="Safo Logo" className="h-14 drop-shadow-lg" />
+        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+              <img src={safoLogo} alt="Safo Logo" className="h-20 relative z-10 drop-shadow-2xl" />
+            </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Painel Administrativo

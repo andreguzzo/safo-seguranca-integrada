@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, FileText, Download, FileSpreadsheet } from "lucide-react";
+import safoLogo from "@/assets/safo-logo.png";
 import {
   Select,
   SelectContent,
@@ -287,23 +288,30 @@ export default function RelatoriosFinanceiros() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/admin/financeiro")}
-          className="mb-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
-        </Button>
-
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground">Relatórios Financeiros</h1>
-          <p className="text-muted-foreground mt-2">
-            Gere relatórios personalizados em PDF ou Excel
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-lg shadow-sm">
+        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+              <img src={safoLogo} alt="Safo Logo" className="h-20 relative z-10 drop-shadow-2xl" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Relatórios Financeiros
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">Gere relatórios personalizados em PDF ou Excel</p>
+            </div>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/admin/financeiro")}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
+          </Button>
         </div>
+      </header>
+
+      <main className="container mx-auto px-6 py-10">
+        <div className="max-w-4xl mx-auto">
 
         <Card>
           <CardHeader>
@@ -405,7 +413,8 @@ export default function RelatoriosFinanceiros() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
