@@ -291,17 +291,17 @@ const OgmoDashboard = () => {
               />
             </div>
             <h2 
-              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-200 hover:scale-[1.02]"
+              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-200 hover:scale-[1.02] text-center"
               onClick={handleOpenOgmoDialog}
               title={ogmo?.nome}
             >
               {ogmo?.nome}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">{ogmo?.cnpj}</p>
+            <p className="text-sm text-muted-foreground mt-1 text-center">{ogmo?.cnpj}</p>
           </div>
 
           <SidebarContent>
-            <Collapsible defaultOpen>
+            <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
                   <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
@@ -360,7 +360,7 @@ const OgmoDashboard = () => {
             </SidebarGroup>
             </Collapsible>
 
-            <Collapsible defaultOpen>
+            <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
                   <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
@@ -431,19 +431,28 @@ const OgmoDashboard = () => {
               </SidebarGroup>
             </Collapsible>
 
-            <SidebarGroup>
-              <SidebarGroupLabel className="px-2">Relatórios</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
-                      <BarChart3 className="h-4 w-4" />
-                      <span>Relatórios Personalizados</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+            <Collapsible defaultOpen={false}>
+              <SidebarGroup>
+                <CollapsibleTrigger asChild>
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
+                    Relatórios
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                  </SidebarGroupLabel>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                          <BarChart3 className="h-4 w-4" />
+                          <span>Relatórios Personalizados</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
           </SidebarContent>
         </Sidebar>
 
