@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,13 +36,13 @@ interface TPA {
 
 const TrabalhadorAvulso = () => {
   const navigate = useNavigate();
+  const { ogmoId } = useParams();
   const { toast } = useToast();
   const [tpas, setTpas] = useState<TPA[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [selectedTpa, setSelectedTpa] = useState<TPA | null>(null);
-  const [ogmoId, setOgmoId] = useState<string>("");
   
   const [formData, setFormData] = useState({
     nome: "",
@@ -54,9 +54,14 @@ const TrabalhadorAvulso = () => {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [ogmoId]);
 
   const checkAuth = async () => {
+    if (!ogmoId) {
+      navigate("/");
+      return;
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       navigate("/login");
@@ -69,21 +74,14 @@ const TrabalhadorAvulso = () => {
       .eq("user_id", session.user.id);
 
     const isOgmo = roles?.some(r => r.role === "ogmo");
+    const isAdmin = roles?.some(r => r.role === "admin");
     
-    if (isOgmo) {
-      const { data: ogmo } = await supabase
-        .from("ogmos")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .single();
-      
-      if (ogmo) {
-        setOgmoId(ogmo.id);
-        loadTpas(ogmo.id);
-      }
-    } else {
+    if (!isOgmo && !isAdmin) {
       navigate("/");
+      return;
     }
+
+    loadTpas(ogmoId);
   };
 
   const loadTpas = async (ogmoId: string) => {
@@ -109,6 +107,16 @@ const TrabalhadorAvulso = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!ogmoId) {
+      toast({
+        title: "Erro",
+        description: "ID do OGMO não encontrado",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -149,6 +157,15 @@ const TrabalhadorAvulso = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!ogmoId) {
+      toast({
+        title: "Erro",
+        description: "ID do OGMO não encontrado",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       const data = await file.arrayBuffer();
