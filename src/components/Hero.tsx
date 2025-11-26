@@ -33,7 +33,7 @@ export const Hero = () => {
             
           </div>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-foreground leading-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight mt-8">
             Sistema Integrado de Gestão da
             <br />
             <span className="text-primary">Segurança do Trabalho Portuário</span>
