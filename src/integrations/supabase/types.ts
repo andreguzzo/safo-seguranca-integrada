@@ -341,6 +341,53 @@ export type Database = {
           },
         ]
       }
+      tpas: {
+        Row: {
+          celular: string | null
+          cpf: string
+          created_at: string | null
+          email: string
+          id: string
+          matricula: string
+          nome: string
+          ogmo_id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          celular?: string | null
+          cpf: string
+          created_at?: string | null
+          email: string
+          id?: string
+          matricula: string
+          nome: string
+          ogmo_id: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          celular?: string | null
+          cpf?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          matricula?: string
+          nome?: string
+          ogmo_id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tpas_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string

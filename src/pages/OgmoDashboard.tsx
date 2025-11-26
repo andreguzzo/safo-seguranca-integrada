@@ -331,7 +331,10 @@ const OgmoDashboard = () => {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                    <SidebarMenuButton 
+                      onClick={() => navigate(`/ogmo/${ogmoId}/tpas`)}
+                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
                     </SidebarMenuButton>
