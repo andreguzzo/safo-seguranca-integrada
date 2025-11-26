@@ -8,3 +8,9 @@ verify_jwt = true
 
 [functions.manage-admin-users]
 verify_jwt = true
+
+[functions.create-tpa-user]
+verify_jwt = true
+
+[functions.reset-tpa-password]
+verify_jwt = true
