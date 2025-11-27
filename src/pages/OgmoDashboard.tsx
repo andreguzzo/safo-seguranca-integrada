@@ -281,41 +281,41 @@ const OgmoDashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
-        <Sidebar className="border-r border-border bg-background">
-          <div className="p-6 border-b border-border bg-muted/30">
+        <Sidebar className="border-r border-border bg-background transition-all duration-300 ease-in-out">
+          <div className="p-6 border-b border-border bg-muted/30 transition-all duration-300">
             <div className="flex items-center justify-center mb-6 py-2">
               <img 
                 src={safoLogo} 
                 alt="Safo Logo" 
-                className="h-24 drop-shadow-2xl hover:scale-105 transition-transform duration-300" 
+                className="h-24 drop-shadow-2xl hover:scale-105 transition-all duration-300 ease-out" 
               />
             </div>
             <h2 
-              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-200 hover:scale-[1.02] text-center"
+              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-300 hover:scale-[1.02] text-center"
               onClick={handleOpenOgmoDialog}
               title={ogmo?.nome}
             >
               {ogmo?.nome}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1 text-center">{ogmo?.cnpj}</p>
+            <p className="text-sm text-muted-foreground mt-1 text-center transition-colors duration-200">{ogmo?.cnpj}</p>
           </div>
 
           <SidebarContent>
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground group">
                     Cadastros
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                <CollapsibleContent>
+                <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
                   <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}
-                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
+                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
                     >
                       <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
@@ -324,7 +324,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)}
-                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
+                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
                     >
                       <Briefcase className="h-4 w-4" />
                       <span>Operadores Portuários</span>
@@ -333,7 +333,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/tpas`)}
-                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
+                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
                     >
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
@@ -342,7 +342,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}
-                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
+                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
                     >
                       <UserCog className="h-4 w-4" />
                       <span>Funcionários</span>
@@ -351,7 +351,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}
-                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
+                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
                     >
                       <Scale className="h-4 w-4" />
                       <span>Sindicatos</span>
@@ -366,64 +366,64 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground group">
                     Documentos
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                <CollapsibleContent>
+                <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <Ambulance className="h-4 w-4" />
                           <span>Acidentes de Trabalho</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <Activity className="h-4 w-4" />
                           <span>Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <AlertTriangle className="h-4 w-4" />
                           <span>RNC</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <FileWarning className="h-4 w-4" />
                           <span>TOP</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <Shield className="h-4 w-4" />
                           <span>RDS</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <ClipboardCheck className="h-4 w-4" />
                           <span>Checklists</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <FileText className="h-4 w-4" />
                           <span>PT</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <FileSearch className="h-4 w-4" />
                           <span>Investigação de Acidentes/Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <CalendarCheck className="h-4 w-4" />
                           <span>Reuniões</span>
                         </SidebarMenuButton>
@@ -437,16 +437,16 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground group">
                     Relatórios
-                    <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+                    <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </SidebarGroupLabel>
                 </CollapsibleTrigger>
-                <CollapsibleContent>
+                <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up overflow-hidden">
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <BarChart3 className="h-4 w-4" />
                           <span>Relatórios Personalizados</span>
                         </SidebarMenuButton>
