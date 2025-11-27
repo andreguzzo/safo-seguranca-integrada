@@ -248,7 +248,7 @@ const OgmoDashboard = () => {
             <p className="text-sm text-muted-foreground mt-1 text-center transition-colors duration-200">{ogmo?.cnpj}</p>
           </div>
 
-          <SidebarContent className="bg-slate-300">
+          <SidebarContent className="bg-primary-foreground">
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
