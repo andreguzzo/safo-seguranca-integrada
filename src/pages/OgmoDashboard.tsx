@@ -7,47 +7,13 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  SidebarProvider, 
-  Sidebar, 
-  SidebarContent, 
-  SidebarGroup, 
-  SidebarGroupContent, 
-  SidebarGroupLabel, 
-  SidebarMenu, 
-  SidebarMenuButton, 
-  SidebarMenuItem,
-  SidebarTrigger 
-} from "@/components/ui/sidebar";
-import { 
-  FileText, 
-  AlertTriangle, 
-  Shield, 
-  Activity, 
-  FileWarning, 
-  ClipboardCheck,
-  Container,
-  Users,
-  Briefcase,
-  Search,
-  FileEdit,
-  Trash2,
-  BarChart3,
-  LogOut,
-  ChevronDown,
-  Ambulance,
-  FileSearch,
-  CalendarCheck,
-  UserCog,
-  Scale,
-  User
-} from "lucide-react";
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
+import { FileText, AlertTriangle, Shield, Activity, FileWarning, ClipboardCheck, Container, Users, Briefcase, Search, FileEdit, Trash2, BarChart3, LogOut, ChevronDown, Ambulance, FileSearch, CalendarCheck, UserCog, Scale, User } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 interface OGMO {
   id: string;
   nome: string;
@@ -57,7 +23,6 @@ interface OGMO {
   email: string | null;
   contato_emergencia: string | null;
 }
-
 interface DocumentStats {
   acidentes: number;
   incidentes: number;
@@ -69,11 +34,14 @@ interface DocumentStats {
   investigacoes: number;
   reunioes: number;
 }
-
 const OgmoDashboard = () => {
-  const { ogmoId } = useParams();
+  const {
+    ogmoId
+  } = useParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [ogmo, setOgmo] = useState<OGMO | null>(null);
   const [stats, setStats] = useState<DocumentStats>({
     acidentes: 0,
@@ -95,50 +63,50 @@ const OgmoDashboard = () => {
     endereco: "",
     telefone: "",
     email: "",
-    contato_emergencia: "",
+    contato_emergencia: ""
   });
   const [passwordFormData, setPasswordFormData] = useState({
     currentPassword: "",
     newPassword: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
 
   // Hook de notificações
-  const { countsByType, markTypeAsRead, markOperatorAlertsAsRead } = useNotifications(ogmoId);
-
+  const {
+    countsByType,
+    markTypeAsRead,
+    markOperatorAlertsAsRead
+  } = useNotifications(ogmoId);
   useEffect(() => {
     checkAuth();
     fetchOgmoData();
   }, [ogmoId]);
-
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: {
+        user
+      }
+    } = await supabase.auth.getUser();
     if (!user) {
       navigate("/login");
       return;
     }
   };
-
   const fetchOgmoData = async () => {
     try {
-      const { data, error } = await supabase
-        .from("ogmos")
-        .select("*")
-        .eq("id", ogmoId)
-        .maybeSingle();
-
+      const {
+        data,
+        error
+      } = await supabase.from("ogmos").select("*").eq("id", ogmoId).maybeSingle();
       if (error) throw error;
-      
       if (!data) {
         toast({
           title: "OGMO não encontrado",
-          variant: "destructive",
+          variant: "destructive"
         });
         navigate("/admin");
         return;
       }
-
       setOgmo(data);
       setOgmoFormData({
         nome: data.nome,
@@ -146,155 +114,135 @@ const OgmoDashboard = () => {
         endereco: data.endereco || "",
         telefone: data.telefone || "",
         email: data.email || "",
-        contato_emergencia: data.contato_emergencia || "",
+        contato_emergencia: data.contato_emergencia || ""
       });
       // TODO: Fetch real stats from database when tables are created
     } catch (error: any) {
       toast({
         title: "Erro ao carregar dados do OGMO",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
   };
-
   const handleOpenOgmoDialog = () => {
     setOgmoDialogOpen(true);
   };
-
   const handleSaveOgmo = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { error } = await supabase
-        .from("ogmos")
-        .update({
-          contato_emergencia: ogmoFormData.contato_emergencia,
-        })
-        .eq("id", ogmoId);
-
+      const {
+        error
+      } = await supabase.from("ogmos").update({
+        contato_emergencia: ogmoFormData.contato_emergencia
+      }).eq("id", ogmoId);
       if (error) throw error;
-
       toast({
         title: "Sucesso",
-        description: "Contato de emergência atualizado com sucesso",
+        description: "Contato de emergência atualizado com sucesso"
       });
-
       fetchOgmoData();
       setOgmoDialogOpen(false);
     } catch (error: any) {
       toast({
         title: "Erro ao atualizar contato de emergência",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (passwordFormData.newPassword !== passwordFormData.confirmPassword) {
       toast({
         title: "Erro",
         description: "A nova senha e a confirmação não coincidem",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (passwordFormData.newPassword.length < 6) {
       toast({
         title: "Erro",
         description: "A nova senha deve ter pelo menos 6 caracteres",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     try {
       // Primeiro verifica a senha atual
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user?.email) {
         throw new Error("Usuário não encontrado");
       }
 
       // Tenta fazer login com a senha atual para validar
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const {
+        error: signInError
+      } = await supabase.auth.signInWithPassword({
         email: user.email,
-        password: passwordFormData.currentPassword,
+        password: passwordFormData.currentPassword
       });
-
       if (signInError) {
         toast({
           title: "Erro",
           description: "Senha atual incorreta",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
 
       // Atualiza a senha
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: passwordFormData.newPassword,
+      const {
+        error: updateError
+      } = await supabase.auth.updateUser({
+        password: passwordFormData.newPassword
       });
-
       if (updateError) throw updateError;
-
       toast({
         title: "Sucesso",
-        description: "Senha alterada com sucesso",
+        description: "Senha alterada com sucesso"
       });
-
       setPasswordDialogOpen(false);
       setPasswordFormData({
         currentPassword: "",
         newPassword: "",
-        confirmPassword: "",
+        confirmPassword: ""
       });
     } catch (error: any) {
       toast({
         title: "Erro ao alterar senha",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
           <p className="text-lg text-muted-foreground">Carregando dashboard...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <SidebarProvider>
+  return <SidebarProvider>
       <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
         <Sidebar className="border-r border-border bg-background transition-all duration-300 ease-in-out">
-          <div className="p-6 border-b border-border bg-muted/30 transition-all duration-300">
+          <div className="p-6 border-b border-border transition-all duration-300 bg-muted">
             <div className="flex items-center justify-center mb-6 py-2">
-              <img 
-                src={safoLogo} 
-                alt="Safo Logo" 
-                className="h-24 drop-shadow-2xl hover:scale-105 transition-all duration-300 ease-out" 
-              />
+              <img src={safoLogo} alt="Safo Logo" className="h-24 drop-shadow-2xl hover:scale-105 transition-all duration-300 ease-out" />
             </div>
-            <h2 
-              className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-300 hover:scale-[1.02] text-center"
-              onClick={handleOpenOgmoDialog}
-              title={ogmo?.nome}
-            >
+            <h2 className="font-bold text-xl truncate cursor-pointer hover:text-primary transition-all duration-300 hover:scale-[1.02] text-center" onClick={handleOpenOgmoDialog} title={ogmo?.nome}>
               {ogmo?.nome}
             </h2>
             <p className="text-sm text-muted-foreground mt-1 text-center transition-colors duration-200">{ogmo?.cnpj}</p>
@@ -313,46 +261,31 @@ const OgmoDashboard = () => {
                   <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}
-                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
-                    >
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)}
-                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
-                    >
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <Briefcase className="h-4 w-4" />
                       <span>Operadores Portuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      onClick={() => navigate(`/ogmo/${ogmoId}/tpas`)}
-                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
-                    >
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/tpas`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}
-                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
-                    >
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <UserCog className="h-4 w-4" />
                       <span>Funcionários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton 
-                      onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}
-                      className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1"
-                    >
+                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <Scale className="h-4 w-4" />
                       <span>Sindicatos</span>
                     </SidebarMenuButton>
@@ -473,20 +406,10 @@ const OgmoDashboard = () => {
               </div>
               <div className="flex items-center gap-3">
                 <NotificationBell ogmoId={ogmoId} />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setPasswordDialogOpen(true)}
-                  className="hover:bg-primary/10 hover:text-primary hover:border-primary transition-colors"
-                  title="Editar perfil"
-                >
+                <Button variant="outline" size="icon" onClick={() => setPasswordDialogOpen(true)} className="hover:bg-primary/10 hover:text-primary hover:border-primary transition-colors" title="Editar perfil">
                   <User className="h-4 w-4" />
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={handleLogout}
-                  className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-                >
+                <Button variant="outline" onClick={handleLogout} className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </Button>
@@ -496,18 +419,10 @@ const OgmoDashboard = () => {
 
           <main className="flex-1 container mx-auto px-6 py-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("novo_acidente")}
-              >
-                {countsByType.acidentes > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("novo_acidente")}>
+                {countsByType.acidentes > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.acidentes}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Acidentes de Trabalho</CardTitle>
                   <div className="p-2 rounded-lg bg-destructive/10">
@@ -520,18 +435,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("novo_incidente")}
-              >
-                {countsByType.incidentes > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("novo_incidente")}>
+                {countsByType.incidentes > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.incidentes}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Incidentes</CardTitle>
                   <div className="p-2 rounded-lg bg-orange-500/10">
@@ -544,18 +451,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("nova_rnc")}
-              >
-                {countsByType.rnc > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_rnc")}>
+                {countsByType.rnc > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.rnc}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">RNC</CardTitle>
                   <div className="p-2 rounded-lg bg-yellow-500/10">
@@ -568,18 +467,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("novo_top")}
-              >
-                {countsByType.top > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("novo_top")}>
+                {countsByType.top > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.top}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">TOP</CardTitle>
                   <div className="p-2 rounded-lg bg-primary/10">
@@ -592,18 +483,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("nova_rds")}
-              >
-                {countsByType.rds > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_rds")}>
+                {countsByType.rds > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.rds}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">RDS</CardTitle>
                   <div className="p-2 rounded-lg bg-green-500/10">
@@ -616,18 +499,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("novo_checklist")}
-              >
-                {countsByType.checklists > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("novo_checklist")}>
+                {countsByType.checklists > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.checklists}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Checklists</CardTitle>
                   <div className="p-2 rounded-lg bg-blue-500/10">
@@ -640,18 +515,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("nova_pt")}
-              >
-                {countsByType.pt > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_pt")}>
+                {countsByType.pt > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.pt}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">PT</CardTitle>
                   <div className="p-2 rounded-lg bg-purple-500/10">
@@ -664,18 +531,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("nova_investigacao")}
-              >
-                {countsByType.investigacoes > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_investigacao")}>
+                {countsByType.investigacoes > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.investigacoes}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Investigação de Acidentes</CardTitle>
                   <div className="p-2 rounded-lg bg-indigo-500/10">
@@ -688,18 +547,10 @@ const OgmoDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card 
-                className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer"
-                onClick={() => markTypeAsRead("nova_reuniao")}
-              >
-                {countsByType.reunioes > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10"
-                  >
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_reuniao")}>
+                {countsByType.reunioes > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
                     {countsByType.reunioes}
-                  </Badge>
-                )}
+                  </Badge>}
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-semibold">Reuniões</CardTitle>
                   <div className="p-2 rounded-lg bg-teal-500/10">
@@ -726,74 +577,36 @@ const OgmoDashboard = () => {
             <form onSubmit={handleSaveOgmo} className="space-y-5">
               <div>
                 <Label htmlFor="nome">Nome</Label>
-                <Input
-                  id="nome"
-                  value={ogmoFormData.nome}
-                  disabled
-                  className="bg-muted"
-                />
+                <Input id="nome" value={ogmoFormData.nome} disabled className="bg-muted" />
               </div>
               <div>
                 <Label htmlFor="cnpj">CNPJ</Label>
-                <Input
-                  id="cnpj"
-                  value={ogmoFormData.cnpj}
-                  disabled
-                  className="bg-muted"
-                />
+                <Input id="cnpj" value={ogmoFormData.cnpj} disabled className="bg-muted" />
               </div>
               <div>
                 <Label htmlFor="endereco">Endereço</Label>
-                <Input
-                  id="endereco"
-                  value={ogmoFormData.endereco}
-                  disabled
-                  className="bg-muted"
-                />
+                <Input id="endereco" value={ogmoFormData.endereco} disabled className="bg-muted" />
               </div>
               <div>
                 <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  id="telefone"
-                  value={ogmoFormData.telefone}
-                  disabled
-                  className="bg-muted"
-                />
+                <Input id="telefone" value={ogmoFormData.telefone} disabled className="bg-muted" />
               </div>
               <div>
                 <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={ogmoFormData.email}
-                  disabled
-                  className="bg-muted"
-                />
+                <Input id="email" type="email" value={ogmoFormData.email} disabled className="bg-muted" />
               </div>
               <div>
                 <Label htmlFor="contato_emergencia">Contato de Emergência</Label>
-                <Input
-                  id="contato_emergencia"
-                  value={ogmoFormData.contato_emergencia}
-                  onChange={(e) =>
-                    setOgmoFormData({ ...ogmoFormData, contato_emergencia: e.target.value })
-                  }
-                  placeholder="Ex: (27) 99999-9999"
-                />
+                <Input id="contato_emergencia" value={ogmoFormData.contato_emergencia} onChange={e => setOgmoFormData({
+                ...ogmoFormData,
+                contato_emergencia: e.target.value
+              })} placeholder="Ex: (27) 99999-9999" />
               </div>
               <div className="flex gap-3 justify-end pt-2">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setOgmoDialogOpen(false)}
-                  className="hover:bg-muted transition-colors"
-                >
+                <Button type="button" variant="outline" onClick={() => setOgmoDialogOpen(false)} className="hover:bg-muted transition-colors">
                   Cancelar
                 </Button>
-                <Button 
-                  type="submit"
-                  className="shadow-md hover:shadow-lg transition-all"
-                >
+                <Button type="submit" className="shadow-md hover:shadow-lg transition-all">
                   Salvar Contato de Emergência
                 </Button>
               </div>
@@ -813,56 +626,34 @@ const OgmoDashboard = () => {
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">Senha Atual</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={passwordFormData.currentPassword}
-                  onChange={(e) =>
-                    setPasswordFormData({ ...passwordFormData, currentPassword: e.target.value })
-                  }
-                  placeholder="Digite sua senha atual"
-                  required
-                />
+                <Input id="currentPassword" type="password" value={passwordFormData.currentPassword} onChange={e => setPasswordFormData({
+                ...passwordFormData,
+                currentPassword: e.target.value
+              })} placeholder="Digite sua senha atual" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="newPassword">Nova Senha</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={passwordFormData.newPassword}
-                  onChange={(e) =>
-                    setPasswordFormData({ ...passwordFormData, newPassword: e.target.value })
-                  }
-                  placeholder="Digite a nova senha (mín. 6 caracteres)"
-                  required
-                />
+                <Input id="newPassword" type="password" value={passwordFormData.newPassword} onChange={e => setPasswordFormData({
+                ...passwordFormData,
+                newPassword: e.target.value
+              })} placeholder="Digite a nova senha (mín. 6 caracteres)" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={passwordFormData.confirmPassword}
-                  onChange={(e) =>
-                    setPasswordFormData({ ...passwordFormData, confirmPassword: e.target.value })
-                  }
-                  placeholder="Digite a nova senha novamente"
-                  required
-                />
+                <Input id="confirmPassword" type="password" value={passwordFormData.confirmPassword} onChange={e => setPasswordFormData({
+                ...passwordFormData,
+                confirmPassword: e.target.value
+              })} placeholder="Digite a nova senha novamente" required />
               </div>
               <div className="flex justify-end gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setPasswordDialogOpen(false);
-                    setPasswordFormData({
-                      currentPassword: "",
-                      newPassword: "",
-                      confirmPassword: "",
-                    });
-                  }}
-                >
+                <Button type="button" variant="outline" onClick={() => {
+                setPasswordDialogOpen(false);
+                setPasswordFormData({
+                  currentPassword: "",
+                  newPassword: "",
+                  confirmPassword: ""
+                });
+              }}>
                   Cancelar
                 </Button>
                 <Button type="submit">
@@ -873,8 +664,6 @@ const OgmoDashboard = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </SidebarProvider>
-  );
+    </SidebarProvider>;
 };
-
 export default OgmoDashboard;
