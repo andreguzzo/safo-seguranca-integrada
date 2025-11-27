@@ -281,8 +281,8 @@ const OgmoDashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
-        <Sidebar className="border-r border-border/50 bg-card/50 backdrop-blur-sm">
-          <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-transparent">
+        <Sidebar className="border-r border-border bg-background">
+          <div className="p-6 border-b border-border bg-muted/30">
             <div className="flex items-center justify-center mb-6 py-2">
               <img 
                 src={safoLogo} 
@@ -304,7 +304,7 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
                     Cadastros
                     <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </SidebarGroupLabel>
@@ -315,7 +315,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/terminais`)}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
                     >
                       <Container className="h-4 w-4" />
                       <span>Terminais Portuários</span>
@@ -324,7 +324,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/operadores`)}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
                     >
                       <Briefcase className="h-4 w-4" />
                       <span>Operadores Portuários</span>
@@ -333,7 +333,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/tpas`)}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
                     >
                       <Users className="h-4 w-4" />
                       <span>TPA's</span>
@@ -342,7 +342,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
                     >
                       <UserCog className="h-4 w-4" />
                       <span>Funcionários</span>
@@ -351,7 +351,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton 
                       onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)}
-                      className="hover:bg-primary/10 hover:text-primary transition-colors"
+                      className="hover:bg-muted hover:text-primary transition-colors text-foreground"
                     >
                       <Scale className="h-4 w-4" />
                       <span>Sindicatos</span>
@@ -366,7 +366,7 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
                     Documentos
                     <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </SidebarGroupLabel>
@@ -375,55 +375,55 @@ const OgmoDashboard = () => {
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <Ambulance className="h-4 w-4" />
                           <span>Acidentes de Trabalho</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <Activity className="h-4 w-4" />
                           <span>Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <AlertTriangle className="h-4 w-4" />
                           <span>RNC</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <FileWarning className="h-4 w-4" />
                           <span>TOP</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <Shield className="h-4 w-4" />
                           <span>RDS</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <ClipboardCheck className="h-4 w-4" />
                           <span>Checklists</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <FileText className="h-4 w-4" />
                           <span>PT</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <FileSearch className="h-4 w-4" />
                           <span>Investigação de Acidentes/Incidentes</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <CalendarCheck className="h-4 w-4" />
                           <span>Reuniões</span>
                         </SidebarMenuButton>
@@ -437,7 +437,7 @@ const OgmoDashboard = () => {
             <Collapsible defaultOpen={false}>
               <SidebarGroup>
                 <CollapsibleTrigger asChild>
-                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted/50 flex items-center justify-between transition-colors rounded-md px-2">
+                  <SidebarGroupLabel className="cursor-pointer hover:bg-muted flex items-center justify-between transition-colors rounded-md px-2 text-foreground">
                     Relatórios
                     <ChevronDown className="h-4 w-4 transition-transform duration-200" />
                   </SidebarGroupLabel>
@@ -446,7 +446,7 @@ const OgmoDashboard = () => {
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-primary/10 hover:text-primary transition-colors">
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-colors text-foreground">
                           <BarChart3 className="h-4 w-4" />
                           <span>Relatórios Personalizados</span>
                         </SidebarMenuButton>
