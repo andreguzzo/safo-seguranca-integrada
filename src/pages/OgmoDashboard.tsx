@@ -238,7 +238,7 @@ const OgmoDashboard = () => {
   return <SidebarProvider>
       <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-muted/20">
         <Sidebar className="border-r border-border bg-background transition-all duration-300 ease-in-out">
-          <div className="p-6 border-b border-border transition-all duration-300 bg-muted">
+          <div className="p-6 border-b border-border transition-all duration-300 bg-secondary">
             <div className="flex items-center justify-center mb-6 py-2">
               <img src={safoLogo} alt="Safo Logo" className="h-24 drop-shadow-2xl hover:scale-105 transition-all duration-300 ease-out" />
             </div>
