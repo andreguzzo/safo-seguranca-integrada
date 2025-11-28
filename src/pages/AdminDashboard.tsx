@@ -347,7 +347,7 @@ const AdminDashboard = () => {
 
           {/* Card OGMO's Cadastrados - Resumo */}
           <Card className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-muted/30 to-transparent">
+            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent">
               <CardTitle className="text-2xl font-bold">OGMO's no Sistema</CardTitle>
               <CardDescription className="text-base mt-2">
                 Visão geral dos órgãos cadastrados
@@ -359,7 +359,7 @@ const AdminDashboard = () => {
                   <p className="text-5xl font-bold text-primary">{ogmos.length}</p>
                   <p className="text-muted-foreground mt-2">OGMO's cadastrados</p>
                 </div>
-                <div className="p-4 rounded-lg bg-primary/10">
+                <div className="p-4 rounded-lg bg-primary/20">
                   <Users className="h-12 w-12 text-primary" />
                 </div>
               </div>
@@ -371,10 +371,10 @@ const AdminDashboard = () => {
             className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
             onClick={() => navigate("/admin/usuarios")}
           >
-            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-secondary/10 to-transparent">
+            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent">
               <div className="flex items-center gap-4">
-                <div className="p-4 rounded-lg bg-secondary/20">
-                  <UserCog className="h-8 w-8 text-secondary-foreground" />
+                <div className="p-4 rounded-lg bg-primary/20">
+                  <UserCog className="h-8 w-8 text-primary" />
                 </div>
                 <div>
                   <CardTitle className="text-2xl font-bold">Gerenciar Usuários</CardTitle>
