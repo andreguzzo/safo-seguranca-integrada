@@ -310,15 +310,6 @@ const AdminDashboard = () => {
           </div>
           <div className="flex items-center gap-3">
             <NotificationBell ogmoId={undefined} />
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={() => navigate("/admin/usuarios")}
-              className="hover:bg-muted transition-colors"
-              title="Gerenciar Usuários"
-            >
-              <UserCog className="h-5 w-5" />
-            </Button>
             <Button variant="outline" onClick={handleLogout} className="hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors">
               <LogOut className="h-4 w-4 mr-2" />
               Sair
@@ -328,7 +319,7 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Card Controle Financeiro */}
           <Card 
             className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
@@ -372,6 +363,31 @@ const AdminDashboard = () => {
                   <Users className="h-12 w-12 text-primary" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Card Gerenciar Usuários */}
+          <Card 
+            className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
+            onClick={() => navigate("/admin/usuarios")}
+          >
+            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-secondary/10 to-transparent">
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-lg bg-secondary/20">
+                  <UserCog className="h-8 w-8 text-secondary-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold">Gerenciar Usuários</CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Controle de acesso e permissões
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground">
+                Gerencie usuários do sistema, atribua funções e controle as permissões de acesso.
+              </p>
             </CardContent>
           </Card>
         </div>
