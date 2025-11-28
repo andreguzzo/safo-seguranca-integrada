@@ -319,7 +319,7 @@ const AdminDashboard = () => {
       </header>
 
       <main className="container mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Card Controle Financeiro */}
           <Card 
             className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/50"
@@ -342,27 +342,6 @@ const AdminDashboard = () => {
               <p className="text-muted-foreground">
                 Acesse o módulo financeiro para visualizar mensalidades, gerar cobranças e acompanhar pagamentos.
               </p>
-            </CardContent>
-          </Card>
-
-          {/* Card OGMO's Cadastrados - Resumo */}
-          <Card className="shadow-xl border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="border-b border-border/50 bg-gradient-to-r from-primary/10 to-transparent">
-              <CardTitle className="text-2xl font-bold">OGMO's no Sistema</CardTitle>
-              <CardDescription className="text-base mt-2">
-                Visão geral dos órgãos cadastrados
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-5xl font-bold text-primary">{ogmos.length}</p>
-                  <p className="text-muted-foreground mt-2">OGMO's cadastrados</p>
-                </div>
-                <div className="p-4 rounded-lg bg-primary/20">
-                  <Users className="h-12 w-12 text-primary" />
-                </div>
-              </div>
             </CardContent>
           </Card>
 
