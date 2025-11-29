@@ -27,6 +27,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { UserPlus, ArrowLeft, Trash2 } from "lucide-react";
 
@@ -35,6 +42,7 @@ interface Funcionario {
   Matricula: number;
   nome_completo: string;
   created_at: string;
+  role?: string;
 }
 
 export default function FuncionariosOgmo() {
@@ -58,11 +66,23 @@ export default function FuncionariosOgmo() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(`
+          *,
+          user_roles (
+            role
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setFuncionarios(data || []);
+      
+      // Mapear os dados incluindo a role
+      const funcionariosComRoles = (data || []).map((func: any) => ({
+        ...func,
+        role: func.user_roles?.[0]?.role || null,
+      }));
+      
+      setFuncionarios(funcionariosComRoles);
     } catch (error) {
       console.error("Erro ao carregar funcionários:", error);
       toast({
@@ -129,6 +149,41 @@ export default function FuncionariosOgmo() {
       toast({
         title: "Erro",
         description: error.message || "Não foi possível cadastrar o funcionário",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      // Primeiro, remover todas as roles existentes do usuário
+      const { error: deleteError } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId);
+
+      if (deleteError) throw deleteError;
+
+      // Se a nova role não for "none", inserir a nova role
+      if (newRole !== "none") {
+        const { error: insertError } = await supabase
+          .from("user_roles")
+          .insert([{ user_id: userId, role: newRole as any }]);
+
+        if (insertError) throw insertError;
+      }
+
+      toast({
+        title: "Sucesso",
+        description: "Permissão atualizada com sucesso",
+      });
+
+      loadFuncionarios();
+    } catch (error: any) {
+      console.error("Erro ao atualizar permissão:", error);
+      toast({
+        title: "Erro",
+        description: error.message || "Não foi possível atualizar a permissão",
         variant: "destructive",
       });
     }
@@ -246,6 +301,7 @@ export default function FuncionariosOgmo() {
                     <TableHead>Matrícula</TableHead>
                     <TableHead>Nome Completo</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
+                    <TableHead>Permissões</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -256,6 +312,24 @@ export default function FuncionariosOgmo() {
                       <TableCell>{func.nome_completo}</TableCell>
                       <TableCell>
                         {new Date(func.created_at).toLocaleDateString("pt-BR")}
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={func.role || "none"}
+                          onValueChange={(value) => handleRoleChange(func.id, value)}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Selecione a permissão" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Sem permissão</SelectItem>
+                            <SelectItem value="admin">Administrador</SelectItem>
+                            <SelectItem value="ogmo">OGMO</SelectItem>
+                            <SelectItem value="terminal">Terminal</SelectItem>
+                            <SelectItem value="sindicato">Sindicato</SelectItem>
+                            <SelectItem value="tpa">TPA</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon">
