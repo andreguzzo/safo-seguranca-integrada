@@ -43,6 +43,7 @@ interface Funcionario {
   nome_completo: string;
   created_at: string;
   perfis?: string[];
+  email?: string;
 }
 
 interface Perfil {
@@ -77,37 +78,13 @@ export default function FuncionariosOgmo() {
         throw new Error("ID do OGMO não encontrado");
       }
 
-      // Buscar profiles associados a este OGMO
-      const { data: profilesData, error: profilesError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("ogmo_id", ogmoId)
-        .order("created_at", { ascending: false });
-
-      if (profilesError) throw profilesError;
-
-      // Buscar perfis de todos os usuários
-      const { data: usuarioPerfisData, error: usuarioPerfisError } = await supabase
-        .from("usuario_perfis")
-        .select("user_id, perfil_id, perfis_usuario(nome)");
-
-      if (usuarioPerfisError) throw usuarioPerfisError;
-
-      // Criar um mapa de user_id para perfis
-      const perfisMap = new Map<string, string[]>();
-      (usuarioPerfisData || []).forEach((up: any) => {
-        const perfis = perfisMap.get(up.user_id) || [];
-        perfis.push(up.perfis_usuario.nome);
-        perfisMap.set(up.user_id, perfis);
+      const { data, error } = await supabase.functions.invoke("get-funcionarios-ogmo", {
+        body: { ogmo_id: ogmoId },
       });
 
-      // Combinar profiles com perfis
-      const funcionariosComPerfis = (profilesData || []).map((func: any) => ({
-        ...func,
-        perfis: perfisMap.get(func.id) || [],
-      }));
-
-      setFuncionarios(funcionariosComPerfis);
+      if (error) throw error;
+      
+      setFuncionarios(data.funcionarios || []);
     } catch (error) {
       console.error("Erro ao carregar funcionários:", error);
       toast({
@@ -146,13 +123,14 @@ export default function FuncionariosOgmo() {
 
       if (editingFuncionario) {
         // Atualizar funcionário existente
-        const { error } = await supabase
-          .from("profiles")
-          .update({
+        const { error } = await supabase.functions.invoke("update-funcionario-ogmo", {
+          body: {
+            user_id: editingFuncionario.id,
+            email: formData.email,
             nome_completo: formData.nome_completo,
-            Matricula: parseInt(formData.matricula),
-          })
-          .eq("id", editingFuncionario.id);
+            matricula: formData.matricula,
+          },
+        });
 
         if (error) throw error;
 
@@ -259,7 +237,7 @@ export default function FuncionariosOgmo() {
       setFormData({
         nome_completo: funcionario.nome_completo,
         matricula: funcionario.Matricula.toString(),
-        email: "",
+        email: funcionario.email || "",
         senha: "",
       });
     } else {
@@ -355,8 +333,12 @@ export default function FuncionariosOgmo() {
                           setFormData({ ...formData, email: e.target.value })
                         }
                         required={!editingFuncionario}
-                        disabled={!!editingFuncionario}
                       />
+                      {editingFuncionario && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O email será atualizado no sistema de autenticação
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="senha">{editingFuncionario ? "Nova Senha (deixe em branco para não alterar)" : "Senha"}</Label>
@@ -392,6 +374,7 @@ export default function FuncionariosOgmo() {
                   <TableRow>
                     <TableHead>Matrícula</TableHead>
                     <TableHead>Nome Completo</TableHead>
+                    <TableHead>E-mail</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
                     <TableHead>Perfil</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
@@ -402,6 +385,7 @@ export default function FuncionariosOgmo() {
                     <TableRow key={func.id}>
                       <TableCell>{func.Matricula}</TableCell>
                       <TableCell>{func.nome_completo}</TableCell>
+                      <TableCell>{func.email || "-"}</TableCell>
                       <TableCell>
                         {new Date(func.created_at).toLocaleDateString("pt-BR")}
                       </TableCell>
