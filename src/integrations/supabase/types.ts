@@ -267,6 +267,82 @@ export type Database = {
           },
         ]
       }
+      perfis_usuario: {
+        Row: {
+          created_at: string | null
+          descricao: string | null
+          id: string
+          nome: string
+          ogmo_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          descricao?: string | null
+          id?: string
+          nome: string
+          ogmo_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          descricao?: string | null
+          id?: string
+          nome?: string
+          ogmo_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perfis_usuario_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      permissoes_perfil: {
+        Row: {
+          created_at: string | null
+          id: string
+          perfil_id: string
+          pode_criar: boolean | null
+          pode_editar: boolean | null
+          pode_excluir: boolean | null
+          pode_visualizar: boolean | null
+          recurso: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          perfil_id: string
+          pode_criar?: boolean | null
+          pode_editar?: boolean | null
+          pode_excluir?: boolean | null
+          pode_visualizar?: boolean | null
+          recurso: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          perfil_id?: string
+          pode_criar?: boolean | null
+          pode_editar?: boolean | null
+          pode_excluir?: boolean | null
+          pode_visualizar?: boolean | null
+          recurso?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "permissoes_perfil_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis_usuario"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -419,6 +495,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      usuario_perfis: {
+        Row: {
+          created_at: string | null
+          id: string
+          perfil_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          perfil_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          perfil_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usuario_perfis_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis_usuario"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
