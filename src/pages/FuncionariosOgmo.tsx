@@ -64,24 +64,32 @@ export default function FuncionariosOgmo() {
 
   const loadFuncionarios = async () => {
     try {
-      const { data, error } = await supabase
+      // Buscar profiles
+      const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          user_roles (
-            role
-          )
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      
-      // Mapear os dados incluindo a role
-      const funcionariosComRoles = (data || []).map((func: any) => ({
+      if (profilesError) throw profilesError;
+
+      // Buscar roles de todos os usuários
+      const { data: rolesData, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+
+      if (rolesError) throw rolesError;
+
+      // Criar um mapa de user_id para role
+      const rolesMap = new Map(
+        (rolesData || []).map((r: any) => [r.user_id, r.role])
+      );
+
+      // Combinar profiles com roles
+      const funcionariosComRoles = (profilesData || []).map((func: any) => ({
         ...func,
-        role: func.user_roles?.[0]?.role || null,
+        role: rolesMap.get(func.id) || null,
       }));
-      
+
       setFuncionarios(funcionariosComRoles);
     } catch (error) {
       console.error("Erro ao carregar funcionários:", error);
