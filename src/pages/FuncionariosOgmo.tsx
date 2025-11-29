@@ -35,7 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, ArrowLeft, Trash2, Settings } from "lucide-react";
+import { UserPlus, ArrowLeft, Trash2, Settings, Pencil } from "lucide-react";
 
 interface Funcionario {
   id: string;
@@ -58,6 +58,7 @@ export default function FuncionariosOgmo() {
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingFuncionario, setEditingFuncionario] = useState<Funcionario | null>(null);
   const [formData, setFormData] = useState({
     nome_completo: "",
     matricula: "",
@@ -143,31 +144,51 @@ export default function FuncionariosOgmo() {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke("create-funcionario-ogmo", {
-        body: {
-          email: formData.email,
-          password: formData.senha,
-          nome_completo: formData.nome_completo,
-          matricula: formData.matricula,
-          ogmo_id: ogmoId,
-        },
-      });
+      if (editingFuncionario) {
+        // Atualizar funcionário existente
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            nome_completo: formData.nome_completo,
+            Matricula: parseInt(formData.matricula),
+          })
+          .eq("id", editingFuncionario.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Sucesso",
-        description: "Funcionário cadastrado com sucesso",
-      });
+        toast({
+          title: "Sucesso",
+          description: "Funcionário atualizado com sucesso",
+        });
+      } else {
+        // Criar novo funcionário
+        const { data, error } = await supabase.functions.invoke("create-funcionario-ogmo", {
+          body: {
+            email: formData.email,
+            password: formData.senha,
+            nome_completo: formData.nome_completo,
+            matricula: formData.matricula,
+            ogmo_id: ogmoId,
+          },
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Sucesso",
+          description: "Funcionário cadastrado com sucesso",
+        });
+      }
 
       setDialogOpen(false);
+      setEditingFuncionario(null);
       setFormData({ nome_completo: "", matricula: "", email: "", senha: "" });
       loadFuncionarios();
     } catch (error: any) {
-      console.error("Erro ao cadastrar funcionário:", error);
+      console.error("Erro ao salvar funcionário:", error);
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível cadastrar o funcionário",
+        description: error.message || "Não foi possível salvar o funcionário",
         variant: "destructive",
       });
     }
@@ -232,6 +253,22 @@ export default function FuncionariosOgmo() {
     }
   };
 
+  const handleOpenDialog = (funcionario?: Funcionario) => {
+    if (funcionario) {
+      setEditingFuncionario(funcionario);
+      setFormData({
+        nome_completo: funcionario.nome_completo,
+        matricula: funcionario.Matricula.toString(),
+        email: "",
+        senha: "",
+      });
+    } else {
+      setEditingFuncionario(null);
+      setFormData({ nome_completo: "", matricula: "", email: "", senha: "" });
+    }
+    setDialogOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
@@ -270,16 +307,18 @@ export default function FuncionariosOgmo() {
                 </Button>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button>
+                    <Button onClick={() => handleOpenDialog()}>
                       <UserPlus className="h-4 w-4 mr-2" />
                       Novo Funcionário
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Cadastrar Novo Funcionário</DialogTitle>
+                    <DialogTitle>{editingFuncionario ? "Editar Funcionário" : "Cadastrar Novo Funcionário"}</DialogTitle>
                     <DialogDescription>
-                      Preencha os dados do funcionário que terá acesso ao sistema
+                      {editingFuncionario 
+                        ? "Atualize os dados do funcionário"
+                        : "Preencha os dados do funcionário que terá acesso ao sistema"}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -315,11 +354,12 @@ export default function FuncionariosOgmo() {
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
-                        required
+                        required={!editingFuncionario}
+                        disabled={!!editingFuncionario}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="senha">Senha</Label>
+                      <Label htmlFor="senha">{editingFuncionario ? "Nova Senha (deixe em branco para não alterar)" : "Senha"}</Label>
                       <Input
                         id="senha"
                         type="password"
@@ -327,11 +367,11 @@ export default function FuncionariosOgmo() {
                         onChange={(e) =>
                           setFormData({ ...formData, senha: e.target.value })
                         }
-                        required
+                        required={!editingFuncionario}
                       />
                     </div>
                     <Button type="submit" className="w-full">
-                      Cadastrar Funcionário
+                      {editingFuncionario ? "Atualizar Funcionário" : "Cadastrar Funcionário"}
                     </Button>
                   </form>
                   </DialogContent>
@@ -388,9 +428,18 @@ export default function FuncionariosOgmo() {
                         </Select>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleOpenDialog(func)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
