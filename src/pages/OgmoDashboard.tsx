@@ -281,13 +281,7 @@ const OgmoDashboard = () => {
                   <SidebarMenuItem>
                     <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/funcionarios`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                       <UserCog className="h-4 w-4" />
-                      <span>Funcionários</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton onClick={() => navigate(`/ogmo/${ogmoId}/sindicatos`)} className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
-                      <Scale className="h-4 w-4" />
-                      <span>Sindicatos</span>
+                      <span>Usuários</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

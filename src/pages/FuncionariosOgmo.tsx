@@ -259,9 +259,9 @@ export default function FuncionariosOgmo() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Funcionários do OGMO</h1>
+            <h1 className="text-3xl font-bold">Usuários do OGMO</h1>
             <p className="text-muted-foreground">
-              Gerencie os funcionários com acesso ao sistema
+              Gerencie os usuários com acesso ao sistema
             </p>
           </div>
         </div>
@@ -270,9 +270,9 @@ export default function FuncionariosOgmo() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Lista de Funcionários</CardTitle>
+                <CardTitle>Lista de Usuários</CardTitle>
                 <CardDescription>
-                  Funcionários cadastrados no sistema
+                  Usuários cadastrados no sistema
                 </CardDescription>
               </div>
               <div className="flex gap-2">
@@ -285,18 +285,18 @@ export default function FuncionariosOgmo() {
                 </Button>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={() => handleOpenDialog()}>
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Novo Funcionário
-                    </Button>
+                  <Button onClick={() => handleOpenDialog()}>
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Novo Usuário
+                  </Button>
                   </DialogTrigger>
                   <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>{editingFuncionario ? "Editar Funcionário" : "Cadastrar Novo Funcionário"}</DialogTitle>
+                    <DialogTitle>{editingFuncionario ? "Editar Usuário" : "Cadastrar Novo Usuário"}</DialogTitle>
                     <DialogDescription>
                       {editingFuncionario 
-                        ? "Atualize os dados do funcionário"
-                        : "Preencha os dados do funcionário que terá acesso ao sistema"}
+                        ? "Atualize os dados do usuário"
+                        : "Preencha os dados do usuário que terá acesso ao sistema"}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-4">
@@ -353,7 +353,7 @@ export default function FuncionariosOgmo() {
                       />
                     </div>
                     <Button type="submit" className="w-full">
-                      {editingFuncionario ? "Atualizar Funcionário" : "Cadastrar Funcionário"}
+                      {editingFuncionario ? "Atualizar Usuário" : "Cadastrar Usuário"}
                     </Button>
                   </form>
                   </DialogContent>
@@ -366,7 +366,7 @@ export default function FuncionariosOgmo() {
               <p className="text-center text-muted-foreground">Carregando...</p>
             ) : funcionarios.length === 0 ? (
               <p className="text-center text-muted-foreground">
-                Nenhum funcionário cadastrado
+                Nenhum usuário cadastrado
               </p>
             ) : (
               <Table>
