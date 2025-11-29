@@ -35,14 +35,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, ArrowLeft, Trash2 } from "lucide-react";
+import { UserPlus, ArrowLeft, Trash2, Settings } from "lucide-react";
 
 interface Funcionario {
   id: string;
   Matricula: number;
   nome_completo: string;
   created_at: string;
-  role?: string;
+  perfis?: string[];
+}
+
+interface Perfil {
+  id: string;
+  nome: string;
 }
 
 export default function FuncionariosOgmo() {
@@ -50,6 +55,7 @@ export default function FuncionariosOgmo() {
   const { ogmoId } = useParams<{ ogmoId: string }>();
   const { toast } = useToast();
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+  const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -61,6 +67,7 @@ export default function FuncionariosOgmo() {
 
   useEffect(() => {
     loadFuncionarios();
+    loadPerfis();
   }, []);
 
   const loadFuncionarios = async () => {
@@ -78,25 +85,28 @@ export default function FuncionariosOgmo() {
 
       if (profilesError) throw profilesError;
 
-      // Buscar roles de todos os usuários
-      const { data: rolesData, error: rolesError } = await supabase
-        .from("user_roles")
-        .select("user_id, role");
+      // Buscar perfis de todos os usuários
+      const { data: usuarioPerfisData, error: usuarioPerfisError } = await supabase
+        .from("usuario_perfis")
+        .select("user_id, perfil_id, perfis_usuario(nome)");
 
-      if (rolesError) throw rolesError;
+      if (usuarioPerfisError) throw usuarioPerfisError;
 
-      // Criar um mapa de user_id para role
-      const rolesMap = new Map(
-        (rolesData || []).map((r: any) => [r.user_id, r.role])
-      );
+      // Criar um mapa de user_id para perfis
+      const perfisMap = new Map<string, string[]>();
+      (usuarioPerfisData || []).forEach((up: any) => {
+        const perfis = perfisMap.get(up.user_id) || [];
+        perfis.push(up.perfis_usuario.nome);
+        perfisMap.set(up.user_id, perfis);
+      });
 
-      // Combinar profiles com roles
-      const funcionariosComRoles = (profilesData || []).map((func: any) => ({
+      // Combinar profiles com perfis
+      const funcionariosComPerfis = (profilesData || []).map((func: any) => ({
         ...func,
-        role: rolesMap.get(func.id) || null,
+        perfis: perfisMap.get(func.id) || [],
       }));
 
-      setFuncionarios(funcionariosComRoles);
+      setFuncionarios(funcionariosComPerfis);
     } catch (error) {
       console.error("Erro ao carregar funcionários:", error);
       toast({
@@ -163,36 +173,60 @@ export default function FuncionariosOgmo() {
     }
   };
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
+  const loadPerfis = async () => {
     try {
-      // Primeiro, remover todas as roles existentes do usuário
+      if (!ogmoId) {
+        throw new Error("ID do OGMO não encontrado");
+      }
+
+      const { data, error } = await supabase
+        .from("perfis_usuario")
+        .select("id, nome")
+        .eq("ogmo_id", ogmoId)
+        .order("nome", { ascending: true });
+
+      if (error) throw error;
+      setPerfis(data || []);
+    } catch (error) {
+      console.error("Erro ao carregar perfis:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os perfis",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePerfilChange = async (userId: string, perfilId: string) => {
+    try {
+      // Primeiro, remover todos os perfis existentes do usuário
       const { error: deleteError } = await supabase
-        .from("user_roles")
+        .from("usuario_perfis")
         .delete()
         .eq("user_id", userId);
 
       if (deleteError) throw deleteError;
 
-      // Se a nova role não for "none", inserir a nova role
-      if (newRole !== "none") {
+      // Se o novo perfil não for "none", inserir o novo perfil
+      if (perfilId !== "none") {
         const { error: insertError } = await supabase
-          .from("user_roles")
-          .insert([{ user_id: userId, role: newRole as any }]);
+          .from("usuario_perfis")
+          .insert([{ user_id: userId, perfil_id: perfilId }]);
 
         if (insertError) throw insertError;
       }
 
       toast({
         title: "Sucesso",
-        description: "Permissão atualizada com sucesso",
+        description: "Perfil atualizado com sucesso",
       });
 
       loadFuncionarios();
     } catch (error: any) {
-      console.error("Erro ao atualizar permissão:", error);
+      console.error("Erro ao atualizar perfil:", error);
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível atualizar a permissão",
+        description: error.message || "Não foi possível atualizar o perfil",
         variant: "destructive",
       });
     }
@@ -226,14 +260,22 @@ export default function FuncionariosOgmo() {
                   Funcionários cadastrados no sistema
                 </CardDescription>
               </div>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Novo Funcionário
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/ogmo/${ogmoId}/perfis`)}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Gerenciar Perfis
+                </Button>
+                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button>
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Novo Funcionário
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Cadastrar Novo Funcionário</DialogTitle>
                     <DialogDescription>
@@ -292,8 +334,9 @@ export default function FuncionariosOgmo() {
                       Cadastrar Funcionário
                     </Button>
                   </form>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
@@ -310,7 +353,7 @@ export default function FuncionariosOgmo() {
                     <TableHead>Matrícula</TableHead>
                     <TableHead>Nome Completo</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
-                    <TableHead>Permissões</TableHead>
+                    <TableHead>Perfil</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -324,19 +367,23 @@ export default function FuncionariosOgmo() {
                       </TableCell>
                       <TableCell>
                         <Select
-                          value={func.role || "none"}
-                          onValueChange={(value) => handleRoleChange(func.id, value)}
+                          value={
+                            func.perfis && func.perfis.length > 0
+                              ? perfis.find(p => func.perfis?.includes(p.nome))?.id || "none"
+                              : "none"
+                          }
+                          onValueChange={(value) => handlePerfilChange(func.id, value)}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Selecione a permissão" />
+                            <SelectValue placeholder="Selecione o perfil" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="none">Sem permissão</SelectItem>
-                            <SelectItem value="admin">Administrador</SelectItem>
-                            <SelectItem value="ogmo">OGMO</SelectItem>
-                            <SelectItem value="terminal">Terminal</SelectItem>
-                            <SelectItem value="sindicato">Sindicato</SelectItem>
-                            <SelectItem value="tpa">TPA</SelectItem>
+                            <SelectItem value="none">Sem perfil</SelectItem>
+                            {perfis.map((perfil) => (
+                              <SelectItem key={perfil.id} value={perfil.id}>
+                                {perfil.nome}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </TableCell>

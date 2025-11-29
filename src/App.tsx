@@ -13,6 +13,7 @@ import RelatoriosFinanceiros from "./pages/RelatoriosFinanceiros";
 import DetalhesFinanceirosOgmo from "./pages/DetalhesFinanceirosOgmo";
 import OgmoDashboard from "./pages/OgmoDashboard";
 import FuncionariosOgmo from "./pages/FuncionariosOgmo";
+import GerenciarPerfis from "./pages/GerenciarPerfis";
 import FuncionariosSindicato from "./pages/FuncionariosSindicato";
 import TerminaisPortuarios from "./pages/TerminaisPortuarios";
 import OperadoresPortuarios from "./pages/OperadoresPortuarios";
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/admin/financeiro/:ogmoId" element={<DetalhesFinanceirosOgmo />} />
           <Route path="/ogmo/:ogmoId" element={<OgmoDashboard />} />
           <Route path="/ogmo/:ogmoId/funcionarios" element={<FuncionariosOgmo />} />
+          <Route path="/ogmo/:ogmoId/perfis" element={<GerenciarPerfis />} />
           <Route path="/ogmo/:ogmoId/sindicatos" element={<FuncionariosSindicato />} />
           <Route path="/ogmo/:ogmoId/terminais" element={<TerminaisPortuarios />} />
           <Route path="/ogmo/:ogmoId/operadores" element={<OperadoresPortuarios />} />
