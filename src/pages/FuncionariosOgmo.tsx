@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +47,7 @@ interface Funcionario {
 
 export default function FuncionariosOgmo() {
   const navigate = useNavigate();
+  const { ogmoId } = useParams<{ ogmoId: string }>();
   const { toast } = useToast();
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,10 +65,15 @@ export default function FuncionariosOgmo() {
 
   const loadFuncionarios = async () => {
     try {
-      // Buscar profiles
+      if (!ogmoId) {
+        throw new Error("ID do OGMO não encontrado");
+      }
+
+      // Buscar profiles associados a este OGMO
       const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
         .select("*")
+        .eq("ogmo_id", ogmoId)
         .order("created_at", { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -118,31 +124,26 @@ export default function FuncionariosOgmo() {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke("create-ogmo-user", {
+      if (!ogmoId) {
+        toast({
+          title: "Erro",
+          description: "ID do OGMO não encontrado",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("create-funcionario-ogmo", {
         body: {
           email: formData.email,
           password: formData.senha,
-          ogmo_data: {
-            nome: formData.nome_completo,
-            cnpj: "",
-          },
+          nome_completo: formData.nome_completo,
+          matricula: formData.matricula,
+          ogmo_id: ogmoId,
         },
       });
 
       if (error) throw error;
-
-      // Atualizar profile com matrícula e nome completo
-      if (data?.user_id) {
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            Matricula: parseInt(formData.matricula),
-            nome_completo: formData.nome_completo,
-          })
-          .eq("id", data.user_id);
-
-        if (profileError) throw profileError;
-      }
 
       toast({
         title: "Sucesso",

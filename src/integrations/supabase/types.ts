@@ -271,25 +271,36 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          Matricula: number
-          nome_completo: string
+          Matricula: number | null
+          nome_completo: string | null
+          ogmo_id: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           id: string
-          Matricula: number
-          nome_completo: string
+          Matricula?: number | null
+          nome_completo?: string | null
+          ogmo_id?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           id?: string
-          Matricula?: number
-          nome_completo?: string
+          Matricula?: number | null
+          nome_completo?: string | null
+          ogmo_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_ogmo_id_fkey"
+            columns: ["ogmo_id"]
+            isOneToOne: false
+            referencedRelation: "ogmos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       terminais_portuarios: {
         Row: {
