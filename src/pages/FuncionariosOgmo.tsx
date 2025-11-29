@@ -239,7 +239,7 @@ export default function FuncionariosOgmo() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/ogmo/${ogmoId}`)}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
