@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
-import { FileText, AlertTriangle, Shield, Activity, FileWarning, ClipboardCheck, Container, Users, Briefcase, Search, FileEdit, Trash2, BarChart3, LogOut, ChevronDown, Ambulance, FileSearch, CalendarCheck, UserCog, Scale, User } from "lucide-react";
+import { FileText, AlertTriangle, Shield, Activity, FileWarning, ClipboardCheck, Container, Users, Briefcase, Search, FileEdit, Trash2, BarChart3, LogOut, ChevronDown, Ambulance, FileSearch, CalendarCheck, UserCog, Scale, User, Compass } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -33,6 +33,7 @@ interface DocumentStats {
   pt: number;
   investigacoes: number;
   reunioes: number;
+  safetyTours: number;
 }
 const OgmoDashboard = () => {
   const {
@@ -52,7 +53,8 @@ const OgmoDashboard = () => {
     checklists: 0,
     pt: 0,
     investigacoes: 0,
-    reunioes: 0
+    reunioes: 0,
+    safetyTours: 0
   });
   const [loading, setLoading] = useState(true);
   const [ogmoDialogOpen, setOgmoDialogOpen] = useState(false);
@@ -355,6 +357,12 @@ const OgmoDashboard = () => {
                           <span>Reuniões</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
+                          <Compass className="h-4 w-4" />
+                          <span>Safety Tour</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </CollapsibleContent>
@@ -554,6 +562,22 @@ const OgmoDashboard = () => {
                 <CardContent>
                   <div className="text-3xl font-bold text-teal-600">{stats.reunioes}</div>
                   <p className="text-xs text-muted-foreground mt-1">reuniões realizadas</p>
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("novo_safety_tour")}>
+                {countsByType.safetyTours > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
+                    {countsByType.safetyTours}
+                  </Badge>}
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-semibold">Safety Tour</CardTitle>
+                  <div className="p-2 rounded-lg bg-cyan-500/10">
+                    <Compass className="h-5 w-5 text-cyan-600" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-cyan-600">{stats.safetyTours}</div>
+                  <p className="text-xs text-muted-foreground mt-1">safety tours realizados</p>
                 </CardContent>
               </Card>
             </div>
