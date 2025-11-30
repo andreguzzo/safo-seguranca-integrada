@@ -28,6 +28,23 @@ const Login = () => {
 
       if (error) throw error;
 
+      // Check if password needs to be changed
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("senha_alterada, ogmo_id")
+        .eq("id", data.user.id)
+        .single();
+
+      // If password hasn't been changed yet, redirect to change password page
+      if (profile && profile.senha_alterada === false) {
+        toast({
+          title: "Alteração de senha necessária",
+          description: "Você precisa alterar sua senha inicial",
+        });
+        navigate("/change-password");
+        return;
+      }
+
       // Check if user is admin
       const { data: roles } = await supabase
         .from("user_roles")
@@ -45,7 +62,18 @@ const Login = () => {
       if (roles) {
         navigate("/admin");
       } else {
-        navigate("/");
+        // Check if user is OGMO
+        const { data: ogmo } = await supabase
+          .from("ogmos")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .maybeSingle();
+
+        if (ogmo) {
+          navigate(`/ogmo/${ogmo.id}`);
+        } else {
+          navigate("/");
+        }
       }
     } catch (error: any) {
       toast({
