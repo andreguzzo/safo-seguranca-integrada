@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,6 +21,22 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Resolve email from identifier (email or matricula)
+      let email = identifier;
+      
+      if (!identifier.includes('@')) {
+        // It's a matricula, need to resolve to email
+        const { data: resolveData, error: resolveError } = await supabase.functions.invoke('resolve-tpa-login', {
+          body: { identifier }
+        });
+
+        if (resolveError || !resolveData?.email) {
+          throw new Error('Credenciais inválidas');
+        }
+
+        email = resolveData.email;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -111,13 +127,13 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="identifier">Email ou Matrícula</Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="identifier"
+                    type="text"
+                    placeholder="seu@email.com ou matrícula"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     required
                     disabled={loading}
                   />
