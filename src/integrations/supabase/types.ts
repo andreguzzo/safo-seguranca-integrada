@@ -345,6 +345,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          cpf: string | null
           created_at: string
           id: string
           Matricula: number | null
@@ -353,6 +354,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cpf?: string | null
           created_at?: string
           id: string
           Matricula?: number | null
@@ -361,6 +363,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cpf?: string | null
           created_at?: string
           id?: string
           Matricula?: number | null

@@ -22,16 +22,16 @@ Deno.serve(async (req) => {
       }
     )
 
-    const { user_id, email, nome_completo, matricula } = await req.json()
+    const { user_id, email, nome_completo, cpf } = await req.json()
 
-    console.log('Atualizando funcionário:', { user_id, email, nome_completo, matricula })
+    console.log('Atualizando funcionário:', { user_id, email, nome_completo, cpf })
 
     // Atualizar profile
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
         nome_completo,
-        Matricula: parseInt(matricula),
+        cpf,
       })
       .eq('id', user_id)
 
