@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "@/components/ui/sidebar";
-import { FileText, AlertTriangle, Shield, Activity, FileWarning, ClipboardCheck, Container, Users, Briefcase, Search, FileEdit, Trash2, BarChart3, LogOut, ChevronDown, Ambulance, FileSearch, CalendarCheck, UserCog, Scale, User, Compass } from "lucide-react";
+import { FileText, AlertTriangle, Shield, Activity, FileWarning, ClipboardCheck, Container, Users, Briefcase, Search, FileEdit, Trash2, BarChart3, LogOut, ChevronDown, Ambulance, CalendarCheck, UserCog, Scale, User, Compass } from "lucide-react";
 import safoLogo from "@/assets/safo-logo.png";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,7 +31,6 @@ interface DocumentStats {
   rds: number;
   checklists: number;
   pt: number;
-  investigacoes: number;
   reunioes: number;
   safetyTours: number;
 }
@@ -52,7 +51,6 @@ const OgmoDashboard = () => {
     rds: 0,
     checklists: 0,
     pt: 0,
-    investigacoes: 0,
     reunioes: 0,
     safetyTours: 0
   });
@@ -347,12 +345,6 @@ const OgmoDashboard = () => {
                       </SidebarMenuItem>
                       <SidebarMenuItem>
                         <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
-                          <FileSearch className="h-4 w-4" />
-                          <span>Investigação de Acidentes/Incidentes</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                      <SidebarMenuItem>
-                        <SidebarMenuButton className="hover:bg-muted hover:text-primary transition-all duration-200 text-foreground hover:translate-x-1">
                           <CalendarCheck className="h-4 w-4" />
                           <span>Reuniões</span>
                         </SidebarMenuButton>
@@ -530,22 +522,6 @@ const OgmoDashboard = () => {
                 <CardContent>
                   <div className="text-3xl font-bold text-purple-600">{stats.pt}</div>
                   <p className="text-xs text-muted-foreground mt-1">permissões de trabalho</p>
-                </CardContent>
-              </Card>
-
-              <Card className="shadow-lg border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] relative cursor-pointer" onClick={() => markTypeAsRead("nova_investigacao")}>
-                {countsByType.investigacoes > 0 && <Badge variant="destructive" className="absolute -top-2 -right-2 h-6 w-6 flex items-center justify-center p-0 text-xs animate-pulse z-10">
-                    {countsByType.investigacoes}
-                  </Badge>}
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-semibold">Investigação de Acidentes</CardTitle>
-                  <div className="p-2 rounded-lg bg-indigo-500/10">
-                    <FileSearch className="h-5 w-5 text-indigo-600" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-indigo-600">{stats.investigacoes}</div>
-                  <p className="text-xs text-muted-foreground mt-1">investigações realizadas</p>
                 </CardContent>
               </Card>
 

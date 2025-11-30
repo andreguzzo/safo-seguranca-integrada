@@ -22,7 +22,6 @@ export interface NotificationCounts {
   rds: number;
   checklists: number;
   pt: number;
-  investigacoes: number;
   reunioes: number;
   safetyTours: number;
   operadores: number;
@@ -39,7 +38,6 @@ export const useNotifications = (ogmoId: string | undefined) => {
     rds: 0,
     checklists: 0,
     pt: 0,
-    investigacoes: 0,
     reunioes: 0,
     safetyTours: 0,
     operadores: 0,
@@ -82,7 +80,6 @@ export const useNotifications = (ogmoId: string | undefined) => {
       rds: 0,
       checklists: 0,
       pt: 0,
-      investigacoes: 0,
       reunioes: 0,
       safetyTours: 0,
       operadores: 0,
@@ -97,7 +94,6 @@ export const useNotifications = (ogmoId: string | undefined) => {
       else if (tipo === "nova_rds") counts.rds++;
       else if (tipo === "novo_checklist") counts.checklists++;
       else if (tipo === "nova_pt") counts.pt++;
-      else if (tipo === "nova_investigacao") counts.investigacoes++;
       else if (tipo === "nova_reuniao") counts.reunioes++;
       else if (tipo === "novo_safety_tour") counts.safetyTours++;
       else if (notification.tipo === "cadastro" || notification.tipo === "descadastramento") {
