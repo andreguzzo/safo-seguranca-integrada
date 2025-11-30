@@ -56,13 +56,14 @@ Deno.serve(async (req) => {
 
     console.log('User created:', newUser.user.id);
 
-    // Update the profile with cpf, nome_completo, and ogmo_id
+    // Update the profile with cpf, nome_completo, ogmo_id, and senha_alterada
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
         cpf: cpf,
         nome_completo: nome_completo,
         ogmo_id: ogmo_id,
+        senha_alterada: false, // Mark as requiring password change
       })
       .eq('id', newUser.user.id);
 

@@ -351,6 +351,7 @@ export type Database = {
           Matricula: number | null
           nome_completo: string | null
           ogmo_id: string | null
+          senha_alterada: boolean | null
           updated_at: string
         }
         Insert: {
@@ -360,6 +361,7 @@ export type Database = {
           Matricula?: number | null
           nome_completo?: string | null
           ogmo_id?: string | null
+          senha_alterada?: boolean | null
           updated_at?: string
         }
         Update: {
@@ -369,6 +371,7 @@ export type Database = {
           Matricula?: number | null
           nome_completo?: string | null
           ogmo_id?: string | null
+          senha_alterada?: boolean | null
           updated_at?: string
         }
         Relationships: [
