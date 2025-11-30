@@ -38,9 +38,9 @@ Deno.serve(async (req) => {
       throw new Error('Insufficient permissions');
     }
 
-    const { email, password, nome_completo, matricula, ogmo_id } = await req.json();
+    const { email, password, nome_completo, cpf, ogmo_id } = await req.json();
 
-    console.log('Creating funcionario:', { email, nome_completo, matricula, ogmo_id });
+    console.log('Creating funcionario:', { email, nome_completo, cpf, ogmo_id });
 
     // Create the user account
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
@@ -56,11 +56,11 @@ Deno.serve(async (req) => {
 
     console.log('User created:', newUser.user.id);
 
-    // Update the profile with matricula, nome_completo, and ogmo_id
+    // Update the profile with cpf, nome_completo, and ogmo_id
     const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({
-        Matricula: parseInt(matricula),
+        cpf: cpf,
         nome_completo: nome_completo,
         ogmo_id: ogmo_id,
       })

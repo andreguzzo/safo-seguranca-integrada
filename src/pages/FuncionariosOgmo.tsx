@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import * as XLSX from "xlsx";
 import {
   Card,
   CardContent,
@@ -35,11 +36,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, ArrowLeft, Trash2, Settings, Pencil } from "lucide-react";
+import { UserPlus, ArrowLeft, Trash2, Settings, Pencil, Upload } from "lucide-react";
 
 interface Funcionario {
   id: string;
-  Matricula: number;
+  cpf: string;
   nome_completo: string;
   created_at: string;
   perfis?: string[];
@@ -62,10 +63,11 @@ export default function FuncionariosOgmo() {
   const [editingFuncionario, setEditingFuncionario] = useState<Funcionario | null>(null);
   const [formData, setFormData] = useState({
     nome_completo: "",
-    matricula: "",
+    cpf: "",
     email: "",
     senha: "",
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadFuncionarios();
@@ -122,13 +124,13 @@ export default function FuncionariosOgmo() {
       }
 
       if (editingFuncionario) {
-        // Atualizar funcionário existente
+        // Atualizar usuário existente
         const { error } = await supabase.functions.invoke("update-funcionario-ogmo", {
           body: {
             user_id: editingFuncionario.id,
             email: formData.email,
             nome_completo: formData.nome_completo,
-            matricula: formData.matricula,
+            cpf: formData.cpf,
           },
         });
 
@@ -136,16 +138,16 @@ export default function FuncionariosOgmo() {
 
         toast({
           title: "Sucesso",
-          description: "Funcionário atualizado com sucesso",
+          description: "Usuário atualizado com sucesso",
         });
       } else {
-        // Criar novo funcionário
+        // Criar novo usuário
         const { data, error } = await supabase.functions.invoke("create-funcionario-ogmo", {
           body: {
             email: formData.email,
-            password: formData.senha,
+            password: formData.cpf, // Senha inicial é o CPF
             nome_completo: formData.nome_completo,
-            matricula: formData.matricula,
+            cpf: formData.cpf,
             ogmo_id: ogmoId,
           },
         });
@@ -154,13 +156,13 @@ export default function FuncionariosOgmo() {
 
         toast({
           title: "Sucesso",
-          description: "Funcionário cadastrado com sucesso",
+          description: "Usuário cadastrado com sucesso. Senha inicial: CPF do usuário",
         });
       }
 
       setDialogOpen(false);
       setEditingFuncionario(null);
-      setFormData({ nome_completo: "", matricula: "", email: "", senha: "" });
+      setFormData({ nome_completo: "", cpf: "", email: "", senha: "" });
       loadFuncionarios();
     } catch (error: any) {
       console.error("Erro ao salvar funcionário:", error);
@@ -236,15 +238,71 @@ export default function FuncionariosOgmo() {
       setEditingFuncionario(funcionario);
       setFormData({
         nome_completo: funcionario.nome_completo,
-        matricula: funcionario.Matricula.toString(),
+        cpf: funcionario.cpf,
         email: funcionario.email || "",
         senha: "",
       });
     } else {
       setEditingFuncionario(null);
-      setFormData({ nome_completo: "", matricula: "", email: "", senha: "" });
+      setFormData({ nome_completo: "", cpf: "", email: "", senha: "" });
     }
     setDialogOpen(true);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const row of jsonData as any[]) {
+        try {
+          const { error } = await supabase.functions.invoke("create-funcionario-ogmo", {
+            body: {
+              email: row.email || row.Email || "",
+              password: row.cpf || row.CPF || "",
+              nome_completo: row.nome_completo || row.nome || row.Nome || "",
+              cpf: row.cpf || row.CPF || "",
+              ogmo_id: ogmoId,
+            },
+          });
+
+          if (error) {
+            console.error("Erro ao importar usuário:", row, error);
+            errorCount++;
+          } else {
+            successCount++;
+          }
+        } catch (err) {
+          console.error("Erro ao processar linha:", row, err);
+          errorCount++;
+        }
+      }
+
+      toast({
+        title: "Importação concluída",
+        description: `${successCount} usuário(s) importado(s) com sucesso. ${errorCount} erro(s).`,
+      });
+
+      loadFuncionarios();
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error: any) {
+      console.error("Erro ao processar arquivo:", error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível processar o arquivo Excel",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -283,6 +341,20 @@ export default function FuncionariosOgmo() {
                   <Settings className="h-4 w-4 mr-2" />
                   Gerenciar Perfis
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Importar Excel
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                   <Button onClick={() => handleOpenDialog()}>
@@ -312,16 +384,21 @@ export default function FuncionariosOgmo() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="matricula">Matrícula</Label>
+                      <Label htmlFor="cpf">CPF</Label>
                       <Input
-                        id="matricula"
-                        type="number"
-                        value={formData.matricula}
+                        id="cpf"
+                        value={formData.cpf}
                         onChange={(e) =>
-                          setFormData({ ...formData, matricula: e.target.value })
+                          setFormData({ ...formData, cpf: e.target.value })
                         }
+                        placeholder="000.000.000-00"
                         required
                       />
+                      {!editingFuncionario && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          O CPF será usado como senha inicial (deve ser alterada no primeiro acesso)
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Label htmlFor="email">E-mail</Label>
@@ -339,18 +416,6 @@ export default function FuncionariosOgmo() {
                           O email será atualizado no sistema de autenticação
                         </p>
                       )}
-                    </div>
-                    <div>
-                      <Label htmlFor="senha">{editingFuncionario ? "Nova Senha (deixe em branco para não alterar)" : "Senha"}</Label>
-                      <Input
-                        id="senha"
-                        type="password"
-                        value={formData.senha}
-                        onChange={(e) =>
-                          setFormData({ ...formData, senha: e.target.value })
-                        }
-                        required={!editingFuncionario}
-                      />
                     </div>
                     <Button type="submit" className="w-full">
                       {editingFuncionario ? "Atualizar Usuário" : "Cadastrar Usuário"}
@@ -372,7 +437,7 @@ export default function FuncionariosOgmo() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Matrícula</TableHead>
+                    <TableHead>CPF</TableHead>
                     <TableHead>Nome Completo</TableHead>
                     <TableHead>E-mail</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
@@ -383,7 +448,7 @@ export default function FuncionariosOgmo() {
                 <TableBody>
                   {funcionarios.map((func) => (
                     <TableRow key={func.id}>
-                      <TableCell>{func.Matricula}</TableCell>
+                      <TableCell>{func.cpf}</TableCell>
                       <TableCell>{func.nome_completo}</TableCell>
                       <TableCell>{func.email || "-"}</TableCell>
                       <TableCell>
